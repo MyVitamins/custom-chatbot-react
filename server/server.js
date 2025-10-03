@@ -20,9 +20,9 @@ const BOTDOJO_PROJECT_ID = 'cbeee3b0-4182-11f0-b112-85b41bbb6a74';
 const BOTDOJO_FLOW_ID = '596f6181-5c0c-11f0-86ab-7561582ecdb8';
 const BOTDOJO_BASE_URL = 'https://api.botdojo.com/api/v1';
 
-// Helper function to parse canvas data from text content
+// Helper function to parse canvas data from text content and normalize to product messages
 function parseCanvasData(textContent) {
-  const canvasMessages = [];
+  const productMessages = [];
   const canvasRegex = /<\|dojo-canvas\|>([^<]+)<\|dojo-canvas\|>/g;
   let match;
   
@@ -30,17 +30,27 @@ function parseCanvasData(textContent) {
     try {
       const jsonData = JSON.parse(match[1]);
       if (jsonData.canvasData && jsonData.canvasData.url) {
-        canvasMessages.push({
-          role: 'bot',
-          type: 'canvas',
-          content: {
-            url: jsonData.canvasData.url,
-            display: jsonData.canvasData.display || 'no-border',
-            height: jsonData.canvasData.height || 300,
-            agent_enabled: jsonData.canvasData.agent_enabled || false,
-            show_inline: jsonData.canvasData.show_inline || true
-          }
-        });
+        const url = jsonData.canvasData.url;
+        
+        // Extract product information from URL
+        const urlObj = new URL(url);
+        const sku = urlObj.searchParams.get('sku');
+        const productId = urlObj.searchParams.get('pid');
+        
+        // Only create product message if this is a product URL
+        if (sku && productId) {
+          productMessages.push({
+            role: 'bot',
+            type: 'product',
+            content: {
+              sku: sku,
+              productId: productId,
+              title: `Product: ${sku}`,
+              image: url, // Use the product URL as image source
+              url: url
+            }
+          });
+        }
       }
     } catch (error) {
       console.log('Failed to parse canvas data:', error.message);
@@ -48,7 +58,7 @@ function parseCanvasData(textContent) {
     }
   }
   
-  return canvasMessages;
+  return productMessages;
 }
 
 // Helper function to clean text content by removing canvas tags
@@ -98,20 +108,20 @@ function normalizeBotDojoResponse(botdojoResponse) {
       });
     }
     
-    // Add product cards
+    // Add product cards (normalized to unified product format)
     productCardSteps.forEach(step => {
       try {
         const args = JSON.parse(step.arguments);
         if (args.sku && args.entity_id) {
           messages.push({
             role: 'bot',
-            type: 'card',
+            type: 'product',
             content: {
-              title: `Product: ${args.sku}`,
-              description: `SKU: ${args.sku} | Entity ID: ${args.entity_id}`,
-              image: step.canvas?.canvasData?.url || undefined,
               sku: args.sku,
-              entityId: args.entity_id
+              productId: args.entity_id,
+              title: `Product: ${args.sku}`,
+              image: step.canvas?.canvasData?.url || undefined,
+              url: step.canvas?.canvasData?.url || `https://uat.gethealthy.store/botdojo/product?sku=${args.sku}&pid=${args.entity_id}`
             }
           });
         }
