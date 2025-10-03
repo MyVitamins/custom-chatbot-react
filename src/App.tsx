@@ -205,8 +205,9 @@ function App() {
   };
 
       return (
-        <div className="flex flex-col h-screen bg-gray-50 dark:bg-gray-900 font-sans transition-colors duration-300 ease-in-out">
-          <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4 shadow-sm transition-colors duration-300 ease-in-out">
+        <div className="flex flex-col h-screen bg-[#FDFDFC] dark:bg-[#0D1117] font-sans transition-colors duration-300 ease-in-out">
+          {/* Header - floating style */}
+          <div className="px-6 py-4 transition-colors duration-300 ease-in-out">
             <div className="flex justify-between items-center max-w-4xl mx-auto">
               <h1 className="text-lg font-semibold text-gray-800 dark:text-gray-100 transition-colors duration-300 ease-in-out">ChatBot</h1>
               <div className="flex items-center gap-2">
@@ -227,9 +228,9 @@ function App() {
         showInitialSuggestions={showInitialSuggestions}
       />
       
-      {/* Suggested Questions Action - only show after conversation starts */}
+      {/* Suggested Questions Action - floating style */}
       {messages.length > 0 && (
-        <div className="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-6 py-3 transition-colors duration-300 ease-in-out">
+        <div className="px-6 py-3 transition-colors duration-300 ease-in-out">
           <div className="flex justify-center">
             <SuggestedQuestionsAction
               onQuestionClick={sendMessage}
