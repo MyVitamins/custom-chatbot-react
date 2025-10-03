@@ -89,11 +89,19 @@ function normalizeBotDojoResponse(botdojoResponse) {
     
   } else if (botdojoResponse.response && botdojoResponse.response.text_output) {
     // Fallback: Extract the main text response
-    messages.push({
-      role: 'bot',
-      type: 'text',
-      content: { text: botdojoResponse.response.text_output }
-    });
+    let textContent = botdojoResponse.response.text_output;
+    // Clean up canvas references from text
+    textContent = textContent.replace(/<\|dojo-canvas\|>[^<]+<\|end\|>/g, '');
+    textContent = textContent.replace(/<\|canvas\|>[^<]+<\|end\|>/g, '');
+    textContent = textContent.trim();
+    
+    if (textContent) {
+      messages.push({
+        role: 'bot',
+        type: 'text',
+        content: { text: textContent }
+      });
+    }
   } else if (botdojoResponse.steps && Array.isArray(botdojoResponse.steps)) {
     // Handle steps array - look for the final output step
     const outputStep = botdojoResponse.steps.find(step => 
@@ -101,11 +109,19 @@ function normalizeBotDojoResponse(botdojoResponse) {
     );
     
     if (outputStep && outputStep.content) {
-      messages.push({
-        role: 'bot',
-        type: 'text',
-        content: { text: outputStep.content }
-      });
+      let textContent = outputStep.content;
+      // Clean up canvas references from text
+      textContent = textContent.replace(/<\|dojo-canvas\|>[^<]+<\|end\|>/g, '');
+      textContent = textContent.replace(/<\|canvas\|>[^<]+<\|end\|>/g, '');
+      textContent = textContent.trim();
+      
+      if (textContent) {
+        messages.push({
+          role: 'bot',
+          type: 'text',
+          content: { text: textContent }
+        });
+      }
     } else {
       // Fallback: use the last step with content
       const lastStepWithContent = botdojoResponse.steps
@@ -113,22 +129,38 @@ function normalizeBotDojoResponse(botdojoResponse) {
         .pop();
       
       if (lastStepWithContent) {
-        messages.push({
-          role: 'bot',
-          type: 'text',
-          content: { text: lastStepWithContent.content }
-        });
+        let textContent = lastStepWithContent.content;
+        // Clean up canvas references from text
+        textContent = textContent.replace(/<\|dojo-canvas\|>[^<]+<\|end\|>/g, '');
+        textContent = textContent.replace(/<\|canvas\|>[^<]+<\|end\|>/g, '');
+        textContent = textContent.trim();
+        
+        if (textContent) {
+          messages.push({
+            role: 'bot',
+            type: 'text',
+            content: { text: textContent }
+          });
+        }
       }
     }
   } else if (botdojoResponse.output && Array.isArray(botdojoResponse.output)) {
     // If BotDojo returns an array of outputs
     botdojoResponse.output.forEach(output => {
       if (output.type === 'text') {
-        messages.push({
-          role: 'bot',
-          type: 'text',
-          content: { text: output.text || output.content || '' }
-        });
+        let textContent = output.text || output.content || '';
+        // Clean up canvas references from text
+        textContent = textContent.replace(/<\|dojo-canvas\|>[^<]+<\|end\|>/g, '');
+        textContent = textContent.replace(/<\|canvas\|>[^<]+<\|end\|>/g, '');
+        textContent = textContent.trim();
+        
+        if (textContent) {
+          messages.push({
+            role: 'bot',
+            type: 'text',
+            content: { text: textContent }
+          });
+        }
       } else if (output.type === 'buttons') {
         messages.push({
           role: 'bot',
