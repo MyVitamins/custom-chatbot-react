@@ -20,6 +20,49 @@ const BOTDOJO_PROJECT_ID = 'cbeee3b0-4182-11f0-b112-85b41bbb6a74';
 const BOTDOJO_FLOW_ID = '596f6181-5c0c-11f0-86ab-7561582ecdb8';
 const BOTDOJO_BASE_URL = 'https://api.botdojo.com/api/v1';
 
+// Helper function to parse canvas data from text content
+function parseCanvasData(textContent) {
+  const canvasMessages = [];
+  const canvasRegex = /<\|dojo-canvas\|>([^<]+)<\|dojo-canvas\|>/g;
+  let match;
+  
+  while ((match = canvasRegex.exec(textContent)) !== null) {
+    try {
+      const jsonData = JSON.parse(match[1]);
+      if (jsonData.canvasData && jsonData.canvasData.url) {
+        canvasMessages.push({
+          role: 'bot',
+          type: 'canvas',
+          content: {
+            url: jsonData.canvasData.url,
+            display: jsonData.canvasData.display || 'no-border',
+            height: jsonData.canvasData.height || 300,
+            agent_enabled: jsonData.canvasData.agent_enabled || false,
+            show_inline: jsonData.canvasData.show_inline || true
+          }
+        });
+      }
+    } catch (error) {
+      console.log('Failed to parse canvas data:', error.message);
+      // Ignore parsing errors and continue
+    }
+  }
+  
+  return canvasMessages;
+}
+
+// Helper function to clean text content by removing canvas tags
+function cleanTextContent(textContent) {
+  // Remove canvas references from text (handle both old and new formats)
+  textContent = textContent.replace(/<\|dojo-canvas\|>[^<]+<\|end\|>/g, '');
+  textContent = textContent.replace(/<\|canvas\|>[^<]+<\|end\|>/g, '');
+  textContent = textContent.replace(/<\|dojo-canvas\|>[^<]+<\|dojo-canvas\|>/g, '');
+  textContent = textContent.replace(/<\|canvas\|>[^<]+<\|canvas\|>/g, '');
+  // Clean up multiple consecutive newlines
+  textContent = textContent.replace(/\n\s*\n\s*\n+/g, '\n\n');
+  return textContent.trim();
+}
+
 // Function to normalize BotDojo response into our message format
 function normalizeBotDojoResponse(botdojoResponse) {
   const messages = [];
@@ -33,18 +76,17 @@ function normalizeBotDojoResponse(botdojoResponse) {
       step.stepLabel === 'ShowProductCardTool' && step.arguments
     );
     
-    // Extract text content and clean up canvas references
+    // Extract text content and parse canvas data
     let textContent = '';
     if (botdojoResponse.response && botdojoResponse.response.text_output) {
       textContent = botdojoResponse.response.text_output;
-      // Remove canvas references from text (handle both old and new formats)
-      textContent = textContent.replace(/<\|dojo-canvas\|>[^<]+<\|end\|>/g, '');
-      textContent = textContent.replace(/<\|canvas\|>[^<]+<\|end\|>/g, '');
-      textContent = textContent.replace(/<\|dojo-canvas\|>[^<]+<\|dojo-canvas\|>/g, '');
-      textContent = textContent.replace(/<\|canvas\|>[^<]+<\|canvas\|>/g, '');
-      // Clean up multiple consecutive newlines
-      textContent = textContent.replace(/\n\s*\n\s*\n+/g, '\n\n');
-      textContent = textContent.trim();
+      
+      // Parse canvas data from text content
+      const canvasMessages = parseCanvasData(textContent);
+      messages.push(...canvasMessages);
+      
+      // Clean up canvas references from text content
+      textContent = cleanTextContent(textContent);
     }
     
     // Add text message if there's content
@@ -108,14 +150,13 @@ function normalizeBotDojoResponse(botdojoResponse) {
   } else if (botdojoResponse.response && botdojoResponse.response.text_output) {
     // Fallback: Extract the main text response
     let textContent = botdojoResponse.response.text_output;
-    // Clean up canvas references from text (handle both old and new formats)
-    textContent = textContent.replace(/<\|dojo-canvas\|>[^<]+<\|end\|>/g, '');
-    textContent = textContent.replace(/<\|canvas\|>[^<]+<\|end\|>/g, '');
-    textContent = textContent.replace(/<\|dojo-canvas\|>[^<]+<\|dojo-canvas\|>/g, '');
-    textContent = textContent.replace(/<\|canvas\|>[^<]+<\|canvas\|>/g, '');
-    // Clean up multiple consecutive newlines
-    textContent = textContent.replace(/\n\s*\n\s*\n+/g, '\n\n');
-    textContent = textContent.trim();
+    
+    // Parse canvas data from text content
+    const canvasMessages = parseCanvasData(textContent);
+    messages.push(...canvasMessages);
+    
+    // Clean up canvas references from text content
+    textContent = cleanTextContent(textContent);
     
     if (textContent) {
       messages.push({
@@ -146,14 +187,13 @@ function normalizeBotDojoResponse(botdojoResponse) {
     
     if (outputStep && outputStep.content) {
       let textContent = outputStep.content;
-      // Clean up canvas references from text (handle both old and new formats)
-      textContent = textContent.replace(/<\|dojo-canvas\|>[^<]+<\|end\|>/g, '');
-      textContent = textContent.replace(/<\|canvas\|>[^<]+<\|end\|>/g, '');
-      textContent = textContent.replace(/<\|dojo-canvas\|>[^<]+<\|dojo-canvas\|>/g, '');
-      textContent = textContent.replace(/<\|canvas\|>[^<]+<\|canvas\|>/g, '');
-      // Clean up multiple consecutive newlines
-      textContent = textContent.replace(/\n\s*\n\s*\n+/g, '\n\n');
-      textContent = textContent.trim();
+      
+      // Parse canvas data from text content
+      const canvasMessages = parseCanvasData(textContent);
+      messages.push(...canvasMessages);
+      
+      // Clean up canvas references from text content
+      textContent = cleanTextContent(textContent);
       
       if (textContent) {
         messages.push({
@@ -170,12 +210,13 @@ function normalizeBotDojoResponse(botdojoResponse) {
       
       if (lastStepWithContent) {
         let textContent = lastStepWithContent.content;
-        // Clean up canvas references from text
-        textContent = textContent.replace(/<\|dojo-canvas\|>[^<]+<\|end\|>/g, '');
-        textContent = textContent.replace(/<\|canvas\|>[^<]+<\|end\|>/g, '');
-        // Clean up multiple consecutive newlines
-        textContent = textContent.replace(/\n\s*\n\s*\n+/g, '\n\n');
-        textContent = textContent.trim();
+        
+        // Parse canvas data from text content
+        const canvasMessages = parseCanvasData(textContent);
+        messages.push(...canvasMessages);
+        
+        // Clean up canvas references from text content
+        textContent = cleanTextContent(textContent);
         
         if (textContent) {
           messages.push({
@@ -191,12 +232,13 @@ function normalizeBotDojoResponse(botdojoResponse) {
     botdojoResponse.output.forEach(output => {
       if (output.type === 'text') {
         let textContent = output.text || output.content || '';
-        // Clean up canvas references from text
-        textContent = textContent.replace(/<\|dojo-canvas\|>[^<]+<\|end\|>/g, '');
-        textContent = textContent.replace(/<\|canvas\|>[^<]+<\|end\|>/g, '');
-        // Clean up multiple consecutive newlines
-        textContent = textContent.replace(/\n\s*\n\s*\n+/g, '\n\n');
-        textContent = textContent.trim();
+        
+        // Parse canvas data from text content
+        const canvasMessages = parseCanvasData(textContent);
+        messages.push(...canvasMessages);
+        
+        // Clean up canvas references from text content
+        textContent = cleanTextContent(textContent);
         
         if (textContent) {
           messages.push({

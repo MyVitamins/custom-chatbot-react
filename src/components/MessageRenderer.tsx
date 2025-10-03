@@ -4,6 +4,7 @@ import ButtonGroup from './ButtonGroup';
 import Card from './Card';
 import TypingIndicator from './TypingIndicator';
 import SuggestedQuestions from './SuggestedQuestions';
+import Canvas from './Canvas';
 import { type Message } from '../types';
 
 interface MessageRendererProps {
@@ -33,9 +34,28 @@ const MessageRenderer: React.FC<MessageRendererProps> = ({ message, messages, me
     return cards;
   };
   
+  // Group consecutive canvas messages for grid layout
+  const getConsecutiveCanvases = () => {
+    const canvases = [];
+    let i = messageIndex;
+    
+    // If this is a canvas message, collect consecutive canvases
+    if (message.type === 'canvas') {
+      while (i < messages.length && messages[i].type === 'canvas' && messages[i].role === 'bot') {
+        canvases.push(messages[i]);
+        i++;
+      }
+    }
+    
+    return canvases;
+  };
+  
   const consecutiveCards = getConsecutiveCards();
+  const consecutiveCanvases = getConsecutiveCanvases();
   const isFirstCard = message.type === 'card' && messageIndex === 0 || 
     (messageIndex > 0 && messages[messageIndex - 1].type !== 'card');
+  const isFirstCanvas = message.type === 'canvas' && messageIndex === 0 || 
+    (messageIndex > 0 && messages[messageIndex - 1].type !== 'canvas');
   
   if (isUser) {
     // User messages: right-aligned bubbles
@@ -88,6 +108,21 @@ const MessageRenderer: React.FC<MessageRendererProps> = ({ message, messages, me
             
             {message.type === 'card' && !isFirstCard && (
               // Skip rendering - this card is already rendered as part of the group
+              null
+            )}
+            
+            {message.type === 'canvas' && isFirstCanvas && (
+              <div className="px-4 py-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {consecutiveCanvases.map((canvasMessage, index) => (
+                    <Canvas key={canvasMessage.id || index} {...canvasMessage.content} />
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            {message.type === 'canvas' && !isFirstCanvas && (
+              // Skip rendering - this canvas is already rendered as part of the group
               null
             )}
             
