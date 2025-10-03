@@ -11,6 +11,9 @@ A modern React-based chat application built with Vite, TypeScript, and TailwindC
 - 📱 **Responsive Design**: Works seamlessly on desktop and mobile
 - ⚡ **Fast Development**: Hot module replacement with Vite
 - 🛡️ **Type Safety**: Full TypeScript support for better development experience
+- 🎯 **Contextual Sidebar**: Companion panel for structured responses with smooth animations
+- 💡 **Inline CTAs**: Clean call-to-action buttons for product recommendations
+- 🎭 **Dark Mode**: Light/dark theme toggle with system preference detection
 
 ## Installation
 

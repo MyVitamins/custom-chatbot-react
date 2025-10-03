@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Contextual Sidebar (Companion Panel)** for structured responses:
+  - Sidebar component with smooth slide-in/out animations
+  - Desktop: Right-side drawer (~400px width)
+  - Mobile: Full-screen overlay slide-up
+  - InlineCTA component for product recommendations
+  - Clean separation: chat focuses on text + CTAs, sidebar handles structured data
+  - Unified ProductCard rendering in sidebar
+  - Responsive design with proper mobile/desktop layouts
 - Initial project setup with React + Vite + TypeScript
 - TailwindCSS integration for styling
 - Chat interface components:

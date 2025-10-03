@@ -234,36 +234,58 @@ function normalizeBotDojoResponse(botdojoResponse) {
       textContent = cleanTextContent(textContent);
     }
     
-    // Add text message if there's content
-    if (textContent) {
-      messages.push({
-        role: 'bot',
-        type: 'text',
-        content: { text: textContent }
-      });
-    }
+    // Collect all structured content (products) for the text message
+    const allStructuredContent = [];
     
     // Add product cards (normalized to unified product format)
     productCardSteps.forEach(step => {
       try {
         const args = JSON.parse(step.arguments);
         if (args.sku && args.entity_id) {
-          messages.push({
-            role: 'bot',
-            type: 'product',
-            content: {
-              sku: args.sku,
-              productId: args.entity_id,
-              title: `Product: ${args.sku}`,
-              image: step.canvas?.canvasData?.url || undefined,
-              url: step.canvas?.canvasData?.url || `https://uat.gethealthy.store/botdojo/product?sku=${args.sku}&pid=${args.entity_id}`
-            }
+          allStructuredContent.push({
+            sku: args.sku,
+            productId: args.entity_id,
+            title: `Product: ${args.sku}`,
+            image: step.canvas?.canvasData?.url || undefined,
+            url: step.canvas?.canvasData?.url || `https://uat.gethealthy.store/botdojo/product?sku=${args.sku}&pid=${args.entity_id}`
           });
         }
       } catch (e) {
         console.log('Error parsing product card arguments:', e);
       }
     });
+    
+    // Add canvas messages to structured content
+    const canvasMessages = parseCanvasData(textContent);
+    canvasMessages.forEach(canvasMsg => {
+      if (canvasMsg.content && canvasMsg.content.sku) {
+        allStructuredContent.push({
+          sku: canvasMsg.content.sku,
+          productId: canvasMsg.content.productId,
+          title: canvasMsg.content.title,
+          image: canvasMsg.content.image,
+          url: canvasMsg.content.url
+        });
+      }
+    });
+
+    // Add text message if there's content
+    if (textContent) {
+      const textMessage = {
+        role: 'bot',
+        type: 'text',
+        content: { text: textContent }
+      };
+      
+      // Add structured content if we have products
+      if (allStructuredContent.length > 0) {
+        textMessage.structured = allStructuredContent;
+      }
+      
+      messages.push(textMessage);
+    }
+    
+    // Individual product messages are no longer needed since structured content is stored in text message
     
     // Look for buttons in the response
     const buttonOptions = ['Energy', 'Immunity', 'Vitamins', 'Minerals', 'Performance', 'Recovery'];

@@ -4,10 +4,11 @@ import { motion } from 'framer-motion';
 interface InlineCTAProps {
   count: number;
   type: 'product' | 'supplement' | 'recommendation';
-  onViewRecommendations: () => void;
+  messageId: string;
+  onViewRecommendations: (messageId: string) => void;
 }
 
-const InlineCTA: React.FC<InlineCTAProps> = ({ count, type, onViewRecommendations }) => {
+const InlineCTA: React.FC<InlineCTAProps> = ({ count, type, messageId, onViewRecommendations }) => {
   const getTypeLabel = () => {
     switch (type) {
       case 'product':
@@ -48,7 +49,7 @@ const InlineCTA: React.FC<InlineCTAProps> = ({ count, type, onViewRecommendation
           </span>
         </div>
         <motion.button
-          onClick={onViewRecommendations}
+          onClick={() => onViewRecommendations(messageId)}
           className="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}

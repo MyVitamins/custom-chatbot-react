@@ -1,13 +1,13 @@
 import React, { useEffect, useRef } from 'react';
 import MessageRenderer from './MessageRenderer';
 import SuggestedQuestions from './SuggestedQuestions';
-import { type Message, type SidebarContent } from '../types';
+import { type Message } from '../types';
 
 interface ChatWindowProps {
   messages: Message[];
   onButtonClick?: (value: string) => void;
   onQuestionClick?: (question: string) => void;
-  onViewRecommendations?: (content: SidebarContent) => void;
+  onViewRecommendations?: (messageId: string) => void;
   showInitialSuggestions?: boolean;
 }
 

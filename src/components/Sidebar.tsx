@@ -1,26 +1,39 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ProductCard from './ProductCard';
+import { type Message } from '../types';
 
 interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
-  content: {
-    title: string;
-    products: Array<{
-      sku: string;
-      productId: number;
-      title: string;
-      image: string;
-      url: string;
-    }>;
-  } | null;
+  messageId: string | null;
+  messages: Message[];
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, content }) => {
+const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, messageId, messages }) => {
+  // Find the message with the given ID and extract structured content
+  const message = messageId ? messages.find(msg => msg.id === messageId) : null;
+  const structuredContent = message?.structured || [];
+  
+  // Generate title based on message type or content
+  const getTitle = () => {
+    if (!message) return 'Recommendations';
+    
+    // Check if the message content mentions specific types
+    const contentText = message.content?.text || '';
+    if (contentText.toLowerCase().includes('sleep')) return 'Sleep Supplements';
+    if (contentText.toLowerCase().includes('energy') || contentText.toLowerCase().includes('focus')) return 'Energy & Focus Supplements';
+    if (contentText.toLowerCase().includes('immune')) return 'Immune Support Supplements';
+    if (contentText.toLowerCase().includes('recovery')) return 'Recovery Supplements';
+    if (contentText.toLowerCase().includes('stress')) return 'Stress Management Supplements';
+    
+    return 'Recommended Supplements';
+  };
+
+  const title = getTitle();
   return (
     <AnimatePresence>
-      {isOpen && content && (
+      {isOpen && structuredContent.length > 0 && (
         <>
           {/* Mobile Overlay */}
           <motion.div
@@ -42,7 +55,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, content }) => {
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                {content.title}
+                {title}
               </h2>
               <button
                 onClick={onClose}
@@ -69,7 +82,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, content }) => {
             {/* Content */}
             <div className="flex-1 overflow-y-auto p-4">
               <div className="space-y-4">
-                {content.products.map((product, index) => (
+                {structuredContent.map((product, index) => (
                   <motion.div
                     key={`${product.sku}-${index}`}
                     initial={{ opacity: 0, y: 20 }}
