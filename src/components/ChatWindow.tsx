@@ -23,7 +23,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ messages, onButtonClick }) => {
           <div className="max-w-4xl mx-auto px-6 py-6">
             {messages.length === 0 ? (
               <div className="flex items-center justify-center h-full text-gray-500">
-                <p className="text-base">Start a conversation by typing a message below.</p>
+                <p className="text-base leading-relaxed">Start a conversation by typing a message below.</p>
               </div>
             ) : (
               messages.map((message, index) => (

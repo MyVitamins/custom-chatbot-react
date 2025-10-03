@@ -47,18 +47,20 @@ const MessageRenderer: React.FC<MessageRendererProps> = ({ message, messages, me
     );
   }
   
-      // Bot messages: full-width content blocks with centered max-width
+      // Bot messages: professional content blocks with centered max-width
       return (
         <div className="mb-6">
           <div className="max-w-2xl mx-auto">
             {message.type === 'text' && (
-              <div className="p-4 text-gray-800 leading-relaxed text-left">
-                <div className="whitespace-pre-wrap">{message.content.text}</div>
+              <div className="px-4 py-3">
+                <div className="text-base leading-relaxed text-gray-800 whitespace-pre-wrap">
+                  {message.content.text}
+                </div>
               </div>
             )}
             
             {message.type === 'buttons' && (
-              <div className="p-4">
+              <div className="px-4 py-3">
                 <ButtonGroup 
                   options={message.content.options} 
                   onButtonClick={onButtonClick || (() => {})} 
@@ -67,7 +69,7 @@ const MessageRenderer: React.FC<MessageRendererProps> = ({ message, messages, me
             )}
             
             {message.type === 'card' && isFirstCard && (
-              <div className="p-4">
+              <div className="px-4 py-3">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {consecutiveCards.map((cardMessage, index) => (
                     <Card key={cardMessage.id || index} {...cardMessage.content} />
@@ -82,8 +84,8 @@ const MessageRenderer: React.FC<MessageRendererProps> = ({ message, messages, me
             )}
             
             {message.type === 'list' && (
-              <div className="p-4">
-                <ul className="list-disc list-inside space-y-2 text-gray-800 leading-relaxed text-left">
+              <div className="px-4 py-3">
+                <ul className="list-disc list-inside space-y-2 text-base leading-relaxed text-gray-800">
                   {message.content.items.map((item: string, index: number) => (
                     <li key={index}>{item}</li>
                   ))}

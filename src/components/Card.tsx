@@ -10,7 +10,7 @@ interface CardProps {
 const Card: React.FC<CardProps> = ({ title, description, image, onClick }) => {
   return (
     <div
-      className={`bg-white rounded-xl shadow-sm p-4 transition-all duration-200 ${
+      className={`bg-white rounded-xl shadow-sm transition-all duration-200 ${
         onClick ? 'cursor-pointer hover:shadow-md hover:scale-105' : ''
       }`}
       onClick={onClick}
@@ -19,12 +19,12 @@ const Card: React.FC<CardProps> = ({ title, description, image, onClick }) => {
         <img
           src={image}
           alt={title}
-          className="w-full h-32 object-cover rounded-lg mb-3"
+          className="w-full h-40 object-cover rounded-t-xl"
         />
       ) : (
-        <div className="w-full h-32 bg-gray-100 rounded-lg mb-3 flex items-center justify-center">
+        <div className="w-full h-40 bg-gray-100 rounded-t-xl flex items-center justify-center">
           <svg
-            className="w-8 h-8 text-gray-400"
+            className="w-10 h-10 text-gray-400"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -39,8 +39,8 @@ const Card: React.FC<CardProps> = ({ title, description, image, onClick }) => {
           </svg>
         </div>
       )}
-      <div>
-        <h3 className="text-lg font-bold text-gray-900 mb-1 leading-tight">{title}</h3>
+      <div className="p-4">
+        <h3 className="text-lg font-medium text-gray-900 mb-2 leading-tight">{title}</h3>
         <p className="text-sm text-gray-500 leading-relaxed">{description}</p>
       </div>
     </div>

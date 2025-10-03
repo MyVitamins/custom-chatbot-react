@@ -92,18 +92,18 @@ function App() {
     setMessages([]);
   };
 
-  return (
-    <div className="flex flex-col h-screen bg-gray-50 font-sans">
-      <div className="bg-white border-b border-gray-200 px-6 py-4 shadow-sm">
-        <div className="flex justify-between items-center max-w-4xl mx-auto">
-          <h1 className="text-xl font-semibold text-gray-800">ChatBot</h1>
-          <SettingsDropdown
-            debugMode={debugMode}
-            onDebugModeChange={setDebugMode}
-            onNewChat={handleNewChat}
-          />
-        </div>
-      </div>
+      return (
+        <div className="flex flex-col h-screen bg-gray-50 font-sans">
+          <div className="bg-white border-b border-gray-200 px-6 py-4 shadow-sm">
+            <div className="flex justify-between items-center max-w-4xl mx-auto">
+              <h1 className="text-lg font-semibold text-gray-800">ChatBot</h1>
+              <SettingsDropdown
+                debugMode={debugMode}
+                onDebugModeChange={setDebugMode}
+                onNewChat={handleNewChat}
+              />
+            </div>
+          </div>
       
       <ChatWindow 
         messages={messages} 
