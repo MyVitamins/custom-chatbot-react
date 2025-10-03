@@ -106,8 +106,8 @@ const SuggestedQuestionsAction: React.FC<SuggestedQuestionsActionProps> = ({
   const handleDragEnd = (event: any, info: any) => {
     setIsDragging(false);
     
-    const threshold = 100; // Minimum distance for swipe
-    const velocityThreshold = 0.5; // Minimum velocity for swipe
+    const threshold = 50; // Minimum distance for swipe (reduced for better responsiveness)
+    const velocityThreshold = 0.3; // Minimum velocity for swipe (reduced for better responsiveness)
     
     // Check if swipe meets threshold (distance or velocity)
     if (Math.abs(info.offset.x) > threshold || Math.abs(info.velocity.x) > velocityThreshold) {
@@ -124,7 +124,7 @@ const SuggestedQuestionsAction: React.FC<SuggestedQuestionsActionProps> = ({
       }
     }
     
-    // Reset position
+    // Reset position with smooth animation
     x.set(0);
   };
 
@@ -294,7 +294,6 @@ const SuggestedQuestionsAction: React.FC<SuggestedQuestionsActionProps> = ({
                   <motion.div
                     className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
                     drag="x"
-                    dragConstraints={{ left: 0, right: 0 }}
                     dragElastic={0.1}
                     onDragStart={handleDragStart}
                     onDragEnd={handleDragEnd}
