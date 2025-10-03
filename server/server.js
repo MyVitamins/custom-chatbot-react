@@ -25,8 +25,70 @@ function normalizeBotDojoResponse(botdojoResponse) {
   const messages = [];
 
   // Handle BotDojo flow run response structure
-  if (botdojoResponse.response && botdojoResponse.response.text_output) {
-    // Extract the main text response
+  if (botdojoResponse.aiMessage && botdojoResponse.aiMessage.steps) {
+    const steps = botdojoResponse.aiMessage.steps;
+    
+    // Extract product cards from ShowProductCardTool steps
+    const productCardSteps = steps.filter(step => 
+      step.stepLabel === 'ShowProductCardTool' && step.arguments
+    );
+    
+    // Extract text content and clean up canvas references
+    let textContent = '';
+    if (botdojoResponse.response && botdojoResponse.response.text_output) {
+      textContent = botdojoResponse.response.text_output;
+      // Remove canvas references from text
+      textContent = textContent.replace(/<\|dojo-canvas\|>[^<]+<\|end\|>/g, '');
+      textContent = textContent.replace(/<\|canvas\|>[^<]+<\|end\|>/g, '');
+      textContent = textContent.trim();
+    }
+    
+    // Add text message if there's content
+    if (textContent) {
+      messages.push({
+        role: 'bot',
+        type: 'text',
+        content: { text: textContent }
+      });
+    }
+    
+    // Add product cards
+    productCardSteps.forEach(step => {
+      try {
+        const args = JSON.parse(step.arguments);
+        if (args.sku && args.entity_id) {
+          messages.push({
+            role: 'bot',
+            type: 'card',
+            content: {
+              title: `Product: ${args.sku}`,
+              description: `SKU: ${args.sku} | Entity ID: ${args.entity_id}`,
+              image: step.canvas?.canvasData?.url || undefined,
+              sku: args.sku,
+              entityId: args.entity_id
+            }
+          });
+        }
+      } catch (e) {
+        console.log('Error parsing product card arguments:', e);
+      }
+    });
+    
+    // Look for buttons in the response
+    const buttonOptions = ['Energy', 'Immunity', 'Vitamins', 'Minerals', 'Performance', 'Recovery'];
+    if (textContent && textContent.toLowerCase().includes('specific purpose')) {
+      messages.push({
+        role: 'bot',
+        type: 'buttons',
+        content: { 
+          text: 'Would you like supplements for a specific purpose?',
+          options: buttonOptions
+        }
+      });
+    }
+    
+  } else if (botdojoResponse.response && botdojoResponse.response.text_output) {
+    // Fallback: Extract the main text response
     messages.push({
       role: 'bot',
       type: 'text',

@@ -21,12 +21,8 @@ const MessageRenderer: React.FC<MessageRendererProps> = ({ message, onButtonClic
         
         {message.type === 'buttons' && (
           <div className="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg">
-            <p className="text-sm mb-2">
-              {typeof message.content === 'string' ? message.content : message.content.text || ''}
-            </p>
             <ButtonGroup 
-              buttons={typeof message.content === 'object' && message.content.options ? 
-                message.content.options.map((option: string) => ({ text: option, value: option })) : []} 
+              content={typeof message.content === 'object' ? message.content : { options: [] }} 
               onButtonClick={onButtonClick || (() => {})} 
             />
           </div>
