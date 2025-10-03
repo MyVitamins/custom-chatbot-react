@@ -20,10 +20,12 @@ const MessageRenderer: React.FC<MessageRendererProps> = ({ message, onButtonClic
         )}
         
         {message.type === 'buttons' && (
-          <ButtonGroup 
-            options={message.content.options} 
-            onButtonClick={onButtonClick || (() => {})} 
-          />
+          <div className="mt-2">
+            <ButtonGroup 
+              options={message.content.options} 
+              onButtonClick={onButtonClick || (() => {})} 
+            />
+          </div>
         )}
         
         {message.type === 'card' && (
@@ -31,11 +33,13 @@ const MessageRenderer: React.FC<MessageRendererProps> = ({ message, onButtonClic
         )}
         
         {message.type === 'list' && (
-          <ul className="list-disc list-inside space-y-1">
-            {message.content.items.map((item: string, index: number) => (
-              <li key={index} className="text-sm">{item}</li>
-            ))}
-          </ul>
+          <div className="bg-white border border-gray-200 rounded-2xl shadow-sm px-4 py-3">
+            <ul className="list-disc list-inside space-y-2 text-gray-800 leading-relaxed">
+              {message.content.items.map((item: string, index: number) => (
+                <li key={index} className="text-sm">{item}</li>
+              ))}
+            </ul>
+          </div>
         )}
       </div>
     </div>

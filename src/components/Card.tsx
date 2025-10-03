@@ -23,8 +23,8 @@ const Card: React.FC<CardProps> = ({ title, description, image, onClick }) => {
         />
       )}
       <div className="p-4">
-        <h3 className="font-bold text-gray-800 mb-2 text-base">{title}</h3>
-        <p className="text-sm text-gray-600 leading-relaxed">{description}</p>
+        <h3 className="text-lg font-semibold text-gray-800 mb-2 leading-tight">{title}</h3>
+        <p className="text-sm text-gray-600 leading-relaxed line-clamp-3">{description}</p>
       </div>
     </div>
   );
