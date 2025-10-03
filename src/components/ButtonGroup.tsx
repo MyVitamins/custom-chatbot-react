@@ -7,7 +7,7 @@ interface ButtonGroupProps {
 
 const ButtonGroup: React.FC<ButtonGroupProps> = ({ options, onButtonClick }) => {
   return (
-    <div className="flex flex-wrap gap-2 mt-3 ml-2">
+    <div className="flex flex-wrap gap-2">
       {options.map((option, index) => (
           <button
             key={index}

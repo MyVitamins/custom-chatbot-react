@@ -12,15 +12,31 @@ interface MessageRendererProps {
 const MessageRenderer: React.FC<MessageRendererProps> = ({ message, onButtonClick }) => {
   const isUser = message.role === 'user';
   
+  if (isUser) {
+    // User messages: right-aligned bubbles
+    return (
+      <div className="flex justify-end mb-6">
+        <div className="max-w-xs lg:max-w-md">
+          {message.type === 'text' && (
+            <MessageBubble role={message.role} text={message.content.text} />
+          )}
+        </div>
+      </div>
+    );
+  }
+  
+  // Bot messages: full-width content blocks
   return (
-    <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4`}>
-      <div className={`max-w-xs lg:max-w-md ${isUser ? 'order-2' : 'order-1'}`}>
+    <div className="mb-6">
+      <div className="max-w-3xl">
         {message.type === 'text' && (
-          <MessageBubble role={message.role} text={message.content.text} />
+          <div className="p-4 text-gray-800 leading-relaxed">
+            <div className="whitespace-pre-wrap">{message.content.text}</div>
+          </div>
         )}
         
         {message.type === 'buttons' && (
-          <div className="mt-2">
+          <div className="p-4">
             <ButtonGroup 
               options={message.content.options} 
               onButtonClick={onButtonClick || (() => {})} 
@@ -29,14 +45,16 @@ const MessageRenderer: React.FC<MessageRendererProps> = ({ message, onButtonClic
         )}
         
         {message.type === 'card' && (
-          <Card {...message.content} />
+          <div className="p-4">
+            <Card {...message.content} />
+          </div>
         )}
         
         {message.type === 'list' && (
-          <div className="bg-white border border-gray-200 rounded-2xl shadow-sm px-4 py-3">
+          <div className="p-4">
             <ul className="list-disc list-inside space-y-2 text-gray-800 leading-relaxed">
               {message.content.items.map((item: string, index: number) => (
-                <li key={index} className="text-sm">{item}</li>
+                <li key={index}>{item}</li>
               ))}
             </ul>
           </div>
