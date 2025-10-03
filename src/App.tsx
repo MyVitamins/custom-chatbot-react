@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import ChatWindow from './components/ChatWindow';
 import InputBar from './components/InputBar';
-import { Message } from './types';
+import { type Message } from './components/MessageRenderer';
 
 function App() {
   const [messages, setMessages] = useState<Message[]>([]);
