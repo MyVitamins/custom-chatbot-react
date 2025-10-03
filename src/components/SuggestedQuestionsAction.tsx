@@ -98,62 +98,69 @@ const SuggestedQuestionsAction: React.FC<SuggestedQuestionsActionProps> = ({
     ? suggestionSets[currentSetIndex] || suggestionSets[0] 
     : questions;
 
-  // Animation variants
-  const panelVariants = {
-    hidden: { opacity: 0, y: 10, scale: 0.95 },
-    visible: { 
-      opacity: 1, 
-      y: 0, 
-      scale: 1,
-      transition: {
-        duration: 0.2,
-        ease: "easeOut",
-        staggerChildren: 0.05
-      }
-    },
-    exit: { 
-      opacity: 0, 
-      y: 10, 
-      scale: 0.95,
-      transition: {
-        duration: 0.15,
-        ease: "easeIn"
-      }
-    }
-  };
+      // Animation variants for panel
+      const panelVariants = {
+        hidden: { opacity: 0, y: 10, scale: 0.95 },
+        visible: { 
+          opacity: 1, 
+          y: 0, 
+          scale: 1,
+          transition: {
+            duration: 0.2,
+            ease: "easeOut"
+          }
+        },
+        exit: { 
+          opacity: 0, 
+          y: 10, 
+          scale: 0.95,
+          transition: {
+            duration: 0.15,
+            ease: "easeIn"
+          }
+        }
+      };
 
-  const buttonVariants = {
-    hidden: { opacity: 0, scale: 0.9 },
-    visible: { 
-      opacity: 1, 
-      scale: 1,
-      transition: {
-        duration: 0.15,
-        ease: "easeOut"
-      }
-    }
-  };
+      // Animation variants for question sets (horizontal slide + fade)
+      const questionSetVariants = {
+        hidden: { 
+          opacity: 0, 
+          x: 20 
+        },
+        visible: { 
+          opacity: 1, 
+          x: 0,
+          transition: {
+            duration: 0.25,
+            ease: "easeOut",
+            staggerChildren: 0.1
+          }
+        },
+        exit: { 
+          opacity: 0, 
+          x: -20,
+          transition: {
+            duration: 0.25,
+            ease: "easeIn"
+          }
+        }
+      };
 
-  const questionSetVariants = {
-    hidden: { opacity: 0, y: 10 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: {
-        duration: 0.3,
-        ease: "easeOut",
-        staggerChildren: 0.1
-      }
-    },
-    exit: { 
-      opacity: 0, 
-      y: -10,
-      transition: {
-        duration: 0.2,
-        ease: "easeIn"
-      }
-    }
-  };
+      // Animation variants for individual tiles
+      const tileVariants = {
+        hidden: { 
+          opacity: 0, 
+          scale: 0.9 
+        },
+        visible: { 
+          opacity: 1, 
+          scale: 1,
+          transition: {
+            duration: 0.2,
+            ease: "easeOut"
+          }
+        }
+      };
 
   return (
     <div className="relative">
@@ -229,38 +236,41 @@ const SuggestedQuestionsAction: React.FC<SuggestedQuestionsActionProps> = ({
               </motion.button>
             </div>
 
-            {/* Questions Grid with Animation */}
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={currentSetIndex}
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
-                variants={questionSetVariants}
-                initial="hidden"
-                animate="visible"
-                exit="exit"
-              >
-                {currentQuestions.length > 0 ? (
-                  currentQuestions.map((question, index) => (
-                    <motion.button
-                      key={`${currentSetIndex}-${index}`}
-                      onClick={() => handleQuestionClick(question)}
-                      className="min-h-[120px] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm hover:shadow-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors transition-shadow duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 flex items-center justify-center p-4"
-                      variants={buttonVariants}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      <span className="text-sm md:text-base font-normal text-gray-800 dark:text-gray-200 text-center leading-relaxed">
-                        {question}
-                      </span>
-                    </motion.button>
-                  ))
-                ) : (
-                  <div className="col-span-full min-h-[120px] flex items-center justify-center text-gray-500 dark:text-gray-400 text-sm">
-                    {isLoadingSets ? 'Loading suggestions...' : 'No suggestions available'}
-                  </div>
-                )}
-              </motion.div>
-            </AnimatePresence>
+                {/* Questions Grid with Animation */}
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={currentSetIndex}
+                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+                    variants={questionSetVariants}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                  >
+                    {currentQuestions.length > 0 ? (
+                      currentQuestions.map((question, index) => (
+                        <motion.button
+                          key={`${currentSetIndex}-${index}`}
+                          onClick={() => handleQuestionClick(question)}
+                          className="min-h-[120px] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm hover:shadow-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors transition-shadow duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 flex items-center justify-center p-4"
+                          variants={tileVariants}
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                        >
+                          <span className="text-sm md:text-base font-medium text-gray-800 dark:text-gray-200 text-center leading-relaxed">
+                            {question}
+                          </span>
+                        </motion.button>
+                      ))
+                    ) : (
+                      <motion.div 
+                        className="col-span-full min-h-[120px] flex items-center justify-center text-gray-500 dark:text-gray-400 text-sm"
+                        variants={tileVariants}
+                      >
+                        {isLoadingSets ? 'Loading suggestions...' : 'No suggestions available'}
+                      </motion.div>
+                    )}
+                  </motion.div>
+                </AnimatePresence>
           </motion.div>
         )}
       </AnimatePresence>
