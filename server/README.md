@@ -9,7 +9,16 @@ Express.js server that handles chat requests and integrates with BotDojo API.
    npm install
    ```
 
-2. Set environment variables:
+2. Configure environment variables:
+   ```bash
+   # Copy the example file
+   cp .env.example .env
+   
+   # Edit .env file with your actual BotDojo credentials
+   nano .env
+   ```
+   
+   Or set environment variables directly:
    ```bash
    export BOTDOJO_API_KEY="your-api-key-here"
    export BOTDOJO_ENDPOINT="https://api.botdojo.com/v1/chat"
