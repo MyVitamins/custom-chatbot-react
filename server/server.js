@@ -23,51 +23,100 @@ const BOTDOJO_BASE_URL = 'https://api.botdojo.com/api/v1';
 // Helper function to parse canvas data from text content and normalize to product messages
 function parseCanvasData(textContent) {
   const productMessages = [];
-  const canvasRegex = /<\|dojo-canvas\|>([^<]+)<\|dojo-canvas\|>/g;
-  let match;
   
-  while ((match = canvasRegex.exec(textContent)) !== null) {
-    try {
-      const jsonData = JSON.parse(match[1]);
-      if (jsonData.canvasData && jsonData.canvasData.url) {
-        const url = jsonData.canvasData.url;
+  // Multiple regex patterns to catch different canvas formats
+  const patterns = [
+    // Pattern 1: <|dojo-canvas|>...<|dojo-canvas|>
+    /<\|dojo-canvas\|>([^<]+)<\|dojo-canvas\|>/g,
+    // Pattern 2: {canvasData: {...}} objects in HTML
+    /\{canvasData:\s*\{[^}]+\}\}/g,
+    // Pattern 3: {"canvasData": {...}} JSON objects
+    /\{\"canvasData\":\s*\{[^}]+\}\}/g,
+    // Pattern 4: <div> wrappers with canvas data
+    /<div[^>]*>\s*\{canvasData:[^}]+\}\s*<\/div>/g,
+    // Pattern 5: Raw canvasData objects without quotes
+    /canvasData:\s*\{[^}]+\}/g
+  ];
+  
+  patterns.forEach(pattern => {
+    let match;
+    while ((match = pattern.exec(textContent)) !== null) {
+      try {
+        let jsonString = match[0];
         
-        // Extract product information from URL
-        const urlObj = new URL(url);
-        const sku = urlObj.searchParams.get('sku');
-        const productId = urlObj.searchParams.get('pid');
+        // Clean up HTML tags if present
+        jsonString = jsonString.replace(/<[^>]*>/g, '');
         
-        // Only create product message if this is a product URL
-        if (sku && productId) {
-          productMessages.push({
-            role: 'bot',
-            type: 'product',
-            content: {
-              sku: sku,
-              productId: productId,
-              title: `Product: ${sku}`,
-              image: url, // Use the product URL as image source
-              url: url
-            }
-          });
+        // Handle different JSON formats
+        if (jsonString.includes('canvasData:')) {
+          // Convert {canvasData: {...}} to {"canvasData": {...}}
+          jsonString = jsonString.replace(/canvasData:/g, '"canvasData":');
         }
+        
+        // Parse the JSON
+        const jsonData = JSON.parse(jsonString);
+        
+        if (jsonData.canvasData && jsonData.canvasData.url) {
+          const url = jsonData.canvasData.url;
+          
+          // Extract product information from URL
+          const urlObj = new URL(url);
+          const sku = urlObj.searchParams.get('sku');
+          const productId = urlObj.searchParams.get('pid');
+          
+          // Only create product message if this is a product URL
+          if (sku && productId) {
+            productMessages.push({
+              role: 'bot',
+              type: 'product',
+              content: {
+                sku: sku,
+                productId: productId,
+                title: `Product: ${sku}`,
+                image: url, // Use the product URL as image source
+                url: url
+              }
+            });
+          }
+        }
+      } catch (error) {
+        console.log('Failed to parse canvas data:', error.message, 'Raw data:', match[0]);
+        // Ignore parsing errors and continue
       }
-    } catch (error) {
-      console.log('Failed to parse canvas data:', error.message);
-      // Ignore parsing errors and continue
     }
-  }
+  });
   
   return productMessages;
 }
 
 // Helper function to clean text content by removing canvas tags
 function cleanTextContent(textContent) {
-  // Remove canvas references from text (handle both old and new formats)
-  textContent = textContent.replace(/<\|dojo-canvas\|>[^<]+<\|end\|>/g, '');
-  textContent = textContent.replace(/<\|canvas\|>[^<]+<\|end\|>/g, '');
-  textContent = textContent.replace(/<\|dojo-canvas\|>[^<]+<\|dojo-canvas\|>/g, '');
-  textContent = textContent.replace(/<\|canvas\|>[^<]+<\|canvas\|>/g, '');
+  // Remove all canvas-related content patterns
+  const patterns = [
+    // Pattern 1: <|dojo-canvas|>...<|end|>
+    /<\|dojo-canvas\|>[^<]+<\|end\|>/g,
+    // Pattern 2: <|canvas|>...<|end|>
+    /<\|canvas\|>[^<]+<\|end\|>/g,
+    // Pattern 3: <|dojo-canvas|>...<|dojo-canvas|>
+    /<\|dojo-canvas\|>[^<]+<\|dojo-canvas\|>/g,
+    // Pattern 4: <|canvas|>...<|canvas|>
+    /<\|canvas\|>[^<]+<\|canvas\|>/g,
+    // Pattern 5: {canvasData: {...}} objects
+    /\{canvasData:\s*\{[^}]+\}\}/g,
+    // Pattern 6: {"canvasData": {...}} JSON objects
+    /\{\"canvasData\":\s*\{[^}]+\}\}/g,
+    // Pattern 7: <div> wrappers with canvas data
+    /<div[^>]*>\s*\{canvasData:[^}]+\}\s*<\/div>/g,
+    // Pattern 8: Raw canvasData objects
+    /canvasData:\s*\{[^}]+\}/g,
+    // Pattern 9: HTML div wrappers with canvas data
+    /<div[^>]*>\s*\{[^}]*canvasData[^}]*\}\s*<\/div>/g
+  ];
+  
+  patterns.forEach(pattern => {
+    textContent = textContent.replace(pattern, '');
+  });
+  
   // Clean up multiple consecutive newlines
   textContent = textContent.replace(/\n\s*\n\s*\n+/g, '\n\n');
   return textContent.trim();
