@@ -20,7 +20,129 @@ const BOTDOJO_PROJECT_ID = 'cbeee3b0-4182-11f0-b112-85b41bbb6a74';
 const BOTDOJO_FLOW_ID = '596f6181-5c0c-11f0-86ab-7561582ecdb8';
 const BOTDOJO_BASE_URL = 'https://api.botdojo.com/api/v1';
 
-// Helper function to parse canvas data from text content and normalize to product messages
+// Helper function to parse canvas data from text content and return structured content objects
+function parseCanvasDataForStructuredContent(textContent) {
+  const structuredContent = [];
+  
+  // Multiple regex patterns to catch different canvas formats
+  const patterns = [
+    // Pattern 1: <|dojo-canvas|>...<|dojo-canvas|>
+    /<\|dojo-canvas\|>([^<]+)<\|dojo-canvas\|>/g,
+    // Pattern 2: {canvasData: {...}} objects in HTML
+    /\{canvasData:\s*\{[^}]+\}\}/g,
+    // Pattern 3: {"canvasData": {...}} JSON objects
+    /\{\"canvasData\":\s*\{[^}]+\}\}/g,
+    // Pattern 4: <div> wrappers with canvas data
+    /<div[^>]*>\s*\{canvasData:[^}]+\}\s*<\/div>/g,
+    // Pattern 5: Raw canvasData objects without quotes
+    /canvasData:\s*\{[^}]+\}/g,
+    // Pattern 6: HTML div wrappers with canvas data (more flexible)
+    /<div[^>]*>\s*\{[^}]*canvasData[^}]*\}\s*<\/div>/g,
+    // Pattern 7: Markdown-style product links
+    /\[([^\]]+)\]\(https:\/\/[^\/]+\/botdojo\/product\?[^)]+\)/g,
+    // Pattern 8: iframe tags with product URLs
+    /<iframe[^>]*src="https:\/\/[^\/]+\/botdojo\/product\?[^"]*"[^>]*><\/iframe>/g,
+    // Pattern 9: Any dojo-canvas tags (including ID-only blocks)
+    /<dojo-canvas[^>]*>[\s\S]*?<\/dojo-canvas>/g
+  ];
+  
+  patterns.forEach(pattern => {
+    let match;
+    while ((match = pattern.exec(textContent)) !== null) {
+      try {
+        let jsonString = match[0];
+        
+        // Handle iframe tags differently
+        if (jsonString.includes('<iframe') && jsonString.includes('src=')) {
+          // Extract URL from iframe src attribute
+          const srcMatch = jsonString.match(/src="([^"]+)"/);
+          if (srcMatch) {
+            const url = srcMatch[1];
+            const urlObj = new URL(url);
+            const sku = urlObj.searchParams.get('sku');
+            const productId = urlObj.searchParams.get('pid');
+            
+            if (sku && productId) {
+              structuredContent.push({
+                sku: sku,
+                productId: parseInt(productId),
+                title: `Product: ${sku}`,
+                image: url,
+                url: url
+              });
+            }
+          }
+          continue;
+        }
+        
+        // Handle markdown links differently
+        if (jsonString.includes('[') && jsonString.includes('](https://')) {
+          // Extract URL from markdown link
+          const urlMatch = jsonString.match(/\(https:\/\/[^)]+\)/);
+          if (urlMatch) {
+            const url = urlMatch[0].slice(1, -1); // Remove parentheses
+            const urlObj = new URL(url);
+            const sku = urlObj.searchParams.get('sku');
+            const productId = urlObj.searchParams.get('pid');
+            
+            if (sku && productId) {
+              structuredContent.push({
+                sku: sku,
+                productId: parseInt(productId),
+                title: `Product: ${sku}`,
+                image: url,
+                url: url
+              });
+            }
+          }
+          continue;
+        }
+        
+        // Handle dojo-canvas tags (including ID-only blocks)
+        if (jsonString.includes('<dojo-canvas')) {
+          // Try to extract JSON from the tag content
+          const jsonMatch = jsonString.match(/\{[\s\S]*\}/);
+          if (jsonMatch) {
+            jsonString = jsonMatch[0];
+          } else {
+            // ID-only block - skip parsing, will be stripped in cleanTextContent
+            continue;
+          }
+        }
+        
+        // Clean up HTML tags if present
+        jsonString = jsonString.replace(/<[^>]*>/g, '');
+        
+        // Try to parse as JSON
+        const canvasData = JSON.parse(jsonString);
+        
+        if (canvasData.url) {
+          // Extract SKU and Product ID from URL
+          const urlObj = new URL(canvasData.url);
+          const sku = urlObj.searchParams.get('sku');
+          const productId = urlObj.searchParams.get('pid');
+          
+          if (sku && productId) {
+            structuredContent.push({
+              sku: sku,
+              productId: parseInt(productId),
+              title: `Product: ${sku}`,
+              image: canvasData.url,
+              url: canvasData.url
+            });
+          }
+        }
+      } catch (e) {
+        // Skip invalid JSON
+        continue;
+      }
+    }
+  });
+  
+  return structuredContent;
+}
+
+// Helper function to parse canvas data from text content and normalize to product messages (legacy - not used anymore)
 function parseCanvasData(textContent) {
   const productMessages = [];
   
@@ -226,9 +348,7 @@ function normalizeBotDojoResponse(botdojoResponse) {
     if (botdojoResponse.response && botdojoResponse.response.text_output) {
       textContent = botdojoResponse.response.text_output;
       
-      // Parse canvas data from text content
-      const canvasMessages = parseCanvasData(textContent);
-      messages.push(...canvasMessages);
+      // Canvas data is now parsed into structured content, not individual messages
       
       // Clean up canvas references from text content
       textContent = cleanTextContent(textContent);
@@ -255,19 +375,9 @@ function normalizeBotDojoResponse(botdojoResponse) {
       }
     });
     
-    // Add canvas messages to structured content
-    const canvasMessages = parseCanvasData(textContent);
-    canvasMessages.forEach(canvasMsg => {
-      if (canvasMsg.content && canvasMsg.content.sku) {
-        allStructuredContent.push({
-          sku: canvasMsg.content.sku,
-          productId: canvasMsg.content.productId,
-          title: canvasMsg.content.title,
-          image: canvasMsg.content.image,
-          url: canvasMsg.content.url
-        });
-      }
-    });
+    // Parse canvas data directly into structured content (no individual messages)
+    const canvasProducts = parseCanvasDataForStructuredContent(textContent);
+    allStructuredContent.push(...canvasProducts);
 
     // Add text message if there's content
     if (textContent) {
@@ -318,9 +428,7 @@ function normalizeBotDojoResponse(botdojoResponse) {
     // Fallback: Extract the main text response
     let textContent = botdojoResponse.response.text_output;
     
-    // Parse canvas data from text content
-    const canvasMessages = parseCanvasData(textContent);
-    messages.push(...canvasMessages);
+    // Canvas data is now parsed into structured content, not individual messages
     
     // Clean up canvas references from text content
     textContent = cleanTextContent(textContent);
@@ -355,9 +463,7 @@ function normalizeBotDojoResponse(botdojoResponse) {
     if (outputStep && outputStep.content) {
       let textContent = outputStep.content;
       
-      // Parse canvas data from text content
-      const canvasMessages = parseCanvasData(textContent);
-      messages.push(...canvasMessages);
+      // Canvas data is now parsed into structured content, not individual messages
       
       // Clean up canvas references from text content
       textContent = cleanTextContent(textContent);
