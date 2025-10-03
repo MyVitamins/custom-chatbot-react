@@ -149,7 +149,13 @@ The server normalizes BotDojo API responses into the expected format. The applic
 - ✅ **API Key**: Pre-configured and working
 - ✅ **Endpoint**: `https://api.botdojo.com/api/v1/accounts/{account_id}/projects/{project_id}/flows/{flow_id}/run`
 - ✅ **Request Format**: `{body: {text_input: "user message"}}`
-- ✅ **Response Handling**: Extracts text from BotDojo's complex response structure
+- ✅ **Response Handling**: Extracts rich content from BotDojo's complex response structure
+
+**Rich Content Support:**
+- 🎯 **Product Cards**: Individual supplement cards with SKU, entity ID, and product URLs
+- 🔘 **Interactive Buttons**: Follow-up question buttons (Energy, Immunity, Vitamins, etc.)
+- 📝 **Clean Text**: Removes BotDojo canvas markers for readable text
+- 🔄 **Multi-Message**: Single BotDojo response generates multiple message types
 
 **Environment Variables (if needed):**
 - `BOTDOJO_API_KEY`: Your BotDojo API key

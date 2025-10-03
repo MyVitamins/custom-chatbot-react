@@ -40,11 +40,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Message content parsing for object-based content format
 - Error handling with detailed error messages from BotDojo API
 
+### Enhanced
+- **Rich Content Extraction**: Now extracts product cards, buttons, and structured content from BotDojo responses
+- **Product Cards**: Displays individual product cards with SKU, entity ID, and product URLs
+- **Interactive Buttons**: Renders follow-up question buttons (Energy, Immunity, Vitamins, etc.)
+- **Canvas Reference Cleanup**: Removes BotDojo canvas markers from text content
+- **Multi-Message Support**: Single BotDojo response now generates multiple message types
+
 ### Changed
 - Updated server configuration to use correct BotDojo API credentials
 - Modified request body format from `{input, stream}` to `{body: {text_input}}`
 - Enhanced response normalization to extract text from BotDojo steps structure
 - Improved error handling to show actual BotDojo API error messages
+- **ButtonGroup Component**: Updated to handle new content structure with text and options
+- **MessageRenderer**: Updated to pass correct props to ButtonGroup component
 
 ### Technical Details
 - Built with React 18 and TypeScript
