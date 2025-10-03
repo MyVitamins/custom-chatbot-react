@@ -12,15 +12,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - TailwindCSS integration for styling
 - Chat interface components:
   - ChatWindow: Full-height scrollable chat panel
-  - MessageRenderer: Renders different message types (text, buttons, cards, list)
+  - MessageRenderer: Renders different message types (text, buttons, cards, list, typing)
   - MessageBubble: Text message bubbles with user/bot styling
   - ButtonGroup: Quick reply buttons
   - Card: Card component with image, title, and description
   - InputBar: Sticky bottom input field with send functionality
+  - TypingIndicator: Animated typing indicator with bouncing dots
 - ChatGPT-like layout with full-height flex column design
 - Message state management in App.tsx with unique ID generation
 - API integration for sending messages to backend (/chat endpoint)
-- Support for different message types: text, buttons, cards, and list
+- Support for different message types: text, buttons, cards, list, and typing
 - List message type with bullet point rendering
 - Auto-scroll to latest messages
 - Loading states and error handling
@@ -31,6 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - POST /chat endpoint for handling user messages
 - Support for multiple message responses from BotDojo
 - Health check endpoint for server monitoring
+- **Typing Indicator Animation**: Real-time typing indicator that appears immediately when user sends a message and disappears when bot response arrives
 
 ### Fixed
 - BotDojo API authentication (401 Unauthorized error resolved)
@@ -46,6 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Interactive Buttons**: Renders follow-up question buttons (Energy, Immunity, Vitamins, etc.)
 - **Canvas Reference Cleanup**: Removes BotDojo canvas markers from text content
 - **Multi-Message Support**: Single BotDojo response now generates multiple message types
+- **Typing Indicator UX**: Smooth animated typing indicator with staggered bounce effect and dark mode support
 
 ### Changed
 - Updated server configuration to use correct BotDojo API credentials
