@@ -29,7 +29,7 @@ const SuggestedQuestionsAction: React.FC<SuggestedQuestionsActionProps> = ({
     }
   }, [isExpanded, context]);
 
-  // Handle click outside to close popover
+  // Handle click outside and ESC key to close popover
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
@@ -37,12 +37,20 @@ const SuggestedQuestionsAction: React.FC<SuggestedQuestionsActionProps> = ({
       }
     };
 
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsExpanded(false);
+      }
+    };
+
     if (isExpanded) {
       document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('keydown', handleKeyDown);
     }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
     };
   }, [isExpanded]);
 
