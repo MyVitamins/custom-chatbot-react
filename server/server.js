@@ -35,7 +35,11 @@ function parseCanvasData(textContent) {
     // Pattern 4: <div> wrappers with canvas data
     /<div[^>]*>\s*\{canvasData:[^}]+\}\s*<\/div>/g,
     // Pattern 5: Raw canvasData objects without quotes
-    /canvasData:\s*\{[^}]+\}/g
+    /canvasData:\s*\{[^}]+\}/g,
+    // Pattern 6: HTML div wrappers with canvas data (more flexible)
+    /<div[^>]*>\s*\{[^}]*canvasData[^}]*\}\s*<\/div>/g,
+    // Pattern 7: Markdown-style product links
+    /\[([^\]]+)\]\(https:\/\/[^\/]+\/botdojo\/product\?[^)]+\)/g
   ];
   
   patterns.forEach(pattern => {
@@ -43,6 +47,33 @@ function parseCanvasData(textContent) {
     while ((match = pattern.exec(textContent)) !== null) {
       try {
         let jsonString = match[0];
+        
+        // Handle markdown links differently
+        if (jsonString.includes('[') && jsonString.includes('](https://')) {
+          // Extract URL from markdown link
+          const urlMatch = jsonString.match(/\(https:\/\/[^)]+\)/);
+          if (urlMatch) {
+            const url = urlMatch[0].slice(1, -1); // Remove parentheses
+            const urlObj = new URL(url);
+            const sku = urlObj.searchParams.get('sku');
+            const productId = urlObj.searchParams.get('pid');
+            
+            if (sku && productId) {
+              productMessages.push({
+                role: 'bot',
+                type: 'product',
+                content: {
+                  sku: sku,
+                  productId: productId,
+                  title: `Product: ${sku}`,
+                  image: url,
+                  url: url
+                }
+              });
+            }
+          }
+          continue;
+        }
         
         // Clean up HTML tags if present
         jsonString = jsonString.replace(/<[^>]*>/g, '');
@@ -110,7 +141,13 @@ function cleanTextContent(textContent) {
     // Pattern 8: Raw canvasData objects
     /canvasData:\s*\{[^}]+\}/g,
     // Pattern 9: HTML div wrappers with canvas data
-    /<div[^>]*>\s*\{[^}]*canvasData[^}]*\}\s*<\/div>/g
+    /<div[^>]*>\s*\{[^}]*canvasData[^}]*\}\s*<\/div>/g,
+    // Pattern 10: Markdown-style product links
+    /\[([^\]]+)\]\(https:\/\/[^\/]+\/botdojo\/product\?[^)]+\)/g,
+    // Pattern 11: HTML div wrappers with flex styling
+    /<div[^>]*style="[^"]*display:\s*flex[^"]*"[^>]*>[\s\S]*?<\/div>/g,
+    // Pattern 12: Any remaining HTML div tags
+    /<div[^>]*>[\s\S]*?<\/div>/g
   ];
   
   patterns.forEach(pattern => {
