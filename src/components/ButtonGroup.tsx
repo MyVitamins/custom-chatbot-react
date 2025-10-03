@@ -1,21 +1,14 @@
 import React from 'react';
 
 interface ButtonGroupProps {
-  content: {
-    text?: string;
-    options: string[];
-  };
+  options: string[];
   onButtonClick: (value: string) => void;
 }
 
-const ButtonGroup: React.FC<ButtonGroupProps> = ({ content, onButtonClick }) => {
+const ButtonGroup: React.FC<ButtonGroupProps> = ({ options, onButtonClick }) => {
   return (
-    <div className="mb-4">
-      {content.text && (
-        <p className="text-gray-700 mb-3">{content.text}</p>
-      )}
-      <div className="flex flex-wrap gap-2">
-        {content.options.map((option, index) => (
+    <div className="flex flex-wrap gap-2">
+      {options.map((option, index) => (
           <button
             key={index}
             onClick={() => onButtonClick(option)}
@@ -24,7 +17,6 @@ const ButtonGroup: React.FC<ButtonGroupProps> = ({ content, onButtonClick }) => 
             {option}
           </button>
         ))}
-      </div>
     </div>
   );
 };
