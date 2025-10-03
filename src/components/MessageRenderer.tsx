@@ -2,7 +2,21 @@ import React from 'react';
 import MessageBubble from './MessageBubble';
 import ButtonGroup from './ButtonGroup';
 import Card from './Card';
-import { Message } from '../types';
+
+export interface Message {
+  role: 'user' | 'assistant';
+  type: 'text' | 'buttons' | 'card';
+  content: string;
+  buttons?: Array<{
+    text: string;
+    value: string;
+  }>;
+  card?: {
+    title: string;
+    description: string;
+    image?: string;
+  };
+}
 
 interface MessageRendererProps {
   message: Message;
