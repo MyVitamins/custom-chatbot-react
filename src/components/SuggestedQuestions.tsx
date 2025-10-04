@@ -97,7 +97,7 @@ const SuggestedQuestions: React.FC<SuggestedQuestionsProps> = ({
     }
   };
 
-  // Dynamic variant: pill-style buttons under bot messages
+  // Dynamic variant: box-style buttons under bot messages (consistent with starter questions)
   if (variant === 'dynamic') {
     return (
       <AnimatePresence mode="wait">
@@ -110,27 +110,29 @@ const SuggestedQuestions: React.FC<SuggestedQuestionsProps> = ({
         >
           {/* Related Questions Header */}
           <motion.div 
-            className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2"
+            className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-3"
             variants={pillVariants}
           >
             Related Questions
           </motion.div>
           
           <motion.div 
-            className="flex flex-wrap gap-2"
+            className="grid gap-3"
             variants={pillContainerVariants}
           >
             {questions.map((question, index) => (
               <motion.button
                 key={`${question}-${index}`}
                 onClick={() => onQuestionClick(question)}
-                className="px-3 py-1.5 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 text-sm rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors duration-200 ease-in-out cursor-pointer"
+                className="w-full text-left p-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-200 ease-in-out group"
                 variants={pillVariants}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
                 aria-label={`Ask: ${question}`}
               >
-                {question}
+                <span className="text-gray-800 dark:text-gray-200 group-hover:text-gray-900 dark:group-hover:text-gray-100 transition-colors duration-200">
+                  {question}
+                </span>
               </motion.button>
             ))}
           </motion.div>

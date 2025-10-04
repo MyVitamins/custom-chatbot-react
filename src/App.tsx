@@ -21,9 +21,21 @@ function App() {
   const generateId = () => Math.random().toString(36).substr(2, 9);
 
   const sendMessage = async (content: string) => {
-    // Hide initial suggestions on first interaction
+    // Hide initial suggestions on first interaction and add intro message to history
     if (showInitialSuggestions) {
       setShowInitialSuggestions(false);
+      
+      // Add the introduction message as a bot message to scroll it into history
+      const introMessage: Message = {
+        id: generateId(),
+        role: 'bot',
+        type: 'text',
+        content: { 
+          text: "Hi, I'm your supplement discovery assistant. I can help you find the right products based on your goals, health concerns, or ingredient preferences. Whether you're curious about which supplements support sleep, stress relief, immune health, or energy, I'll guide you toward options that match your needs.\n\nYou can ask about specific conditions, ingredients, or general wellness goals — and I'll provide tailored product recommendations."
+        }
+      };
+      
+      setMessages(prev => [introMessage]);
     }
     
     // Add user message immediately
