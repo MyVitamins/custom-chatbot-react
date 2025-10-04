@@ -432,6 +432,30 @@ function normalizeBotDojoResponse(botdojoResponse) {
   } else if (botdojoResponse.response && botdojoResponse.response.text_output) {
     // Fallback: Extract the main text response
     let textContent = botdojoResponse.response.text_output;
+    let suggestedQuestions = [];
+    
+    // Try to parse JSON format with text and suggestedQuestions
+    try {
+      const parsedContent = JSON.parse(textContent);
+      console.log('=== FALLBACK JSON PARSING DEBUG ===');
+      console.log('Original textContent:', textContent);
+      console.log('Parsed content:', parsedContent);
+      console.log('Has text field:', !!parsedContent.text);
+      console.log('Text field type:', typeof parsedContent.text);
+      console.log('Has suggestedQuestions:', !!parsedContent.suggestedQuestions);
+      console.log('SuggestedQuestions type:', typeof parsedContent.suggestedQuestions);
+      console.log('=== END FALLBACK JSON PARSING DEBUG ===');
+      
+      if (parsedContent.text && typeof parsedContent.text === 'string') {
+        textContent = parsedContent.text;
+        if (parsedContent.suggestedQuestions && Array.isArray(parsedContent.suggestedQuestions)) {
+          suggestedQuestions = parsedContent.suggestedQuestions;
+        }
+      }
+    } catch (e) {
+      console.log('Fallback JSON parsing failed:', e.message);
+      // Not JSON, continue with original text content
+    }
     
     // Canvas data is now parsed into structured content, not individual messages
     
@@ -439,24 +463,32 @@ function normalizeBotDojoResponse(botdojoResponse) {
     textContent = cleanTextContent(textContent);
     
     if (textContent) {
-      messages.push({
+      const message = {
         role: 'bot',
         type: 'text',
         content: { text: textContent }
-      });
+      };
+      
+      // Add suggested questions if available
+      if (suggestedQuestions.length > 0) {
+        message.suggestedQuestions = suggestedQuestions;
+      }
+      
+      messages.push(message);
     }
     
     // Extract suggested questions from BotDojo response (fallback)
-    let suggestedQuestions = [];
-    if (botdojoResponse.suggestedQuestions && Array.isArray(botdojoResponse.suggestedQuestions)) {
-      suggestedQuestions = botdojoResponse.suggestedQuestions;
-    }
-    
-    // Add suggested questions to the last bot message if any exist
-    if (suggestedQuestions.length > 0 && messages.length > 0) {
-      const lastMessage = messages[messages.length - 1];
-      if (lastMessage.role === 'bot') {
-        lastMessage.suggestedQuestions = suggestedQuestions;
+    if (suggestedQuestions.length === 0) {
+      if (botdojoResponse.suggestedQuestions && Array.isArray(botdojoResponse.suggestedQuestions)) {
+        suggestedQuestions = botdojoResponse.suggestedQuestions;
+      }
+      
+      // Add suggested questions to the last bot message if any exist
+      if (suggestedQuestions.length > 0 && messages.length > 0) {
+        const lastMessage = messages[messages.length - 1];
+        if (lastMessage.role === 'bot') {
+          lastMessage.suggestedQuestions = suggestedQuestions;
+        }
       }
     }
   } else if (botdojoResponse.steps && Array.isArray(botdojoResponse.steps)) {
@@ -472,6 +504,15 @@ function normalizeBotDojoResponse(botdojoResponse) {
       // Try to parse JSON format with text and suggestedQuestions
       try {
         const parsedContent = JSON.parse(textContent);
+        console.log('=== JSON PARSING DEBUG ===');
+        console.log('Original textContent:', textContent);
+        console.log('Parsed content:', parsedContent);
+        console.log('Has text field:', !!parsedContent.text);
+        console.log('Text field type:', typeof parsedContent.text);
+        console.log('Has suggestedQuestions:', !!parsedContent.suggestedQuestions);
+        console.log('SuggestedQuestions type:', typeof parsedContent.suggestedQuestions);
+        console.log('=== END JSON PARSING DEBUG ===');
+        
         if (parsedContent.text && typeof parsedContent.text === 'string') {
           textContent = parsedContent.text;
           if (parsedContent.suggestedQuestions && Array.isArray(parsedContent.suggestedQuestions)) {
@@ -479,6 +520,7 @@ function normalizeBotDojoResponse(botdojoResponse) {
           }
         }
       } catch (e) {
+        console.log('JSON parsing failed:', e.message);
         // Not JSON, continue with original text content
       }
       
