@@ -51,36 +51,83 @@ const SuggestedQuestions: React.FC<SuggestedQuestionsProps> = ({
     }
   };
 
+  // Animation variants for dynamic pills
+  const pillContainerVariants = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.05
+      }
+    },
+    exit: { 
+      opacity: 0,
+      transition: {
+        duration: 0.2,
+        ease: "easeIn",
+        staggerChildren: 0.05,
+        staggerDirection: -1
+      }
+    }
+  };
+
+  const pillVariants = {
+    hidden: { 
+      opacity: 0, 
+      y: 10,
+      scale: 0.95
+    },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      scale: 1,
+      transition: {
+        duration: 0.25,
+        ease: "easeOut"
+      }
+    },
+    exit: { 
+      opacity: 0, 
+      scale: 0.9,
+      transition: {
+        duration: 0.2,
+        ease: "easeIn"
+      }
+    }
+  };
+
   // Dynamic variant: pill-style buttons under bot messages
   if (variant === 'dynamic') {
     return (
-      <motion.div 
-        className="px-4 py-3 mt-3"
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, ease: "easeOut", staggerChildren: 0.1 }}
-      >
+      <AnimatePresence mode="wait">
         <motion.div 
-          className="flex flex-wrap gap-2"
+          className="px-4 py-3 mt-3"
+          variants={pillContainerVariants}
           initial="hidden"
           animate="visible"
-          variants={containerVariants}
+          exit="exit"
         >
-          {questions.map((question, index) => (
-            <motion.button
-              key={index}
-              onClick={() => onQuestionClick(question)}
-              className="px-3 py-1.5 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 text-sm rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors duration-200 ease-in-out cursor-pointer"
-              variants={buttonVariants}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              aria-label={`Ask: ${question}`}
-            >
-              {question}
-            </motion.button>
-          ))}
+          <motion.div 
+            className="flex flex-wrap gap-2"
+            variants={pillContainerVariants}
+          >
+            {questions.map((question, index) => (
+              <motion.button
+                key={`${question}-${index}`}
+                onClick={() => onQuestionClick(question)}
+                className="px-3 py-1.5 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 text-sm rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors duration-200 ease-in-out cursor-pointer"
+                variants={pillVariants}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                aria-label={`Ask: ${question}`}
+              >
+                {question}
+              </motion.button>
+            ))}
+          </motion.div>
         </motion.div>
-      </motion.div>
+      </AnimatePresence>
     );
   }
   
