@@ -467,6 +467,20 @@ function normalizeBotDojoResponse(botdojoResponse) {
     
     if (outputStep && outputStep.content) {
       let textContent = outputStep.content;
+      let suggestedQuestions = [];
+      
+      // Try to parse JSON format with text and suggestedQuestions
+      try {
+        const parsedContent = JSON.parse(textContent);
+        if (parsedContent.text && typeof parsedContent.text === 'string') {
+          textContent = parsedContent.text;
+          if (parsedContent.suggestedQuestions && Array.isArray(parsedContent.suggestedQuestions)) {
+            suggestedQuestions = parsedContent.suggestedQuestions;
+          }
+        }
+      } catch (e) {
+        // Not JSON, continue with original text content
+      }
       
       // Canvas data is now parsed into structured content, not individual messages
       
@@ -474,11 +488,18 @@ function normalizeBotDojoResponse(botdojoResponse) {
       textContent = cleanTextContent(textContent);
       
       if (textContent) {
-        messages.push({
+        const message = {
           role: 'bot',
           type: 'text',
           content: { text: textContent }
-        });
+        };
+        
+        // Add suggested questions if available
+        if (suggestedQuestions.length > 0) {
+          message.suggestedQuestions = suggestedQuestions;
+        }
+        
+        messages.push(message);
       }
     } else {
       // Fallback: use the last step with content

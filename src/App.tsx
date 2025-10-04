@@ -262,7 +262,15 @@ function App() {
     return 'general health and wellness';
   };
 
-      return (
+  const handleRemoveSuggestions = (messageId: string) => {
+    setMessages(prev => prev.map(msg => 
+      msg.id === messageId 
+        ? { ...msg, suggestedQuestions: [] }
+        : msg
+    ));
+  };
+
+  return (
         <div className="flex flex-col h-screen bg-[#FDFDFC] dark:bg-[#0D1117] font-sans transition-colors duration-300 ease-in-out">
           {/* Header - floating style */}
           <div className="px-6 py-4 transition-colors duration-300 ease-in-out">
@@ -293,6 +301,7 @@ function App() {
         onButtonClick={handleButtonClick}
         onQuestionClick={sendMessage}
         onViewRecommendations={handleViewRecommendations}
+        onRemoveSuggestions={handleRemoveSuggestions}
         showInitialSuggestions={showInitialSuggestions}
       />
       

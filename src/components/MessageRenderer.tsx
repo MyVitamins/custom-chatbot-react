@@ -14,9 +14,10 @@ interface MessageRendererProps {
   onButtonClick?: (value: string) => void;
   onQuestionClick?: (question: string) => void;
   onViewRecommendations?: (messageId: string) => void;
+  onRemoveSuggestions?: (messageId: string) => void;
 }
 
-const MessageRenderer: React.FC<MessageRendererProps> = ({ message, messages, messageIndex, onButtonClick, onQuestionClick, onViewRecommendations }) => {
+const MessageRenderer: React.FC<MessageRendererProps> = ({ message, messages, messageIndex, onButtonClick, onQuestionClick, onViewRecommendations, onRemoveSuggestions }) => {
   const isUser = message.role === 'user';
   
   // No longer need consecutive product grouping since products are stored as structured content
@@ -84,7 +85,13 @@ const MessageRenderer: React.FC<MessageRendererProps> = ({ message, messages, me
             {/* Dynamic Suggested Questions */}
             {message.suggestedQuestions && message.suggestedQuestions.length > 0 && onQuestionClick && (
               <SuggestedQuestions 
-                onQuestionClick={onQuestionClick} 
+                onQuestionClick={(question) => {
+                  onQuestionClick(question);
+                  // Remove suggestions after clicking
+                  if (onRemoveSuggestions) {
+                    onRemoveSuggestions(message.id);
+                  }
+                }} 
                 questions={message.suggestedQuestions}
                 variant="dynamic"
               />

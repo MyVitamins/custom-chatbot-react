@@ -8,6 +8,7 @@ interface ChatWindowProps {
   onButtonClick?: (value: string) => void;
   onQuestionClick?: (question: string) => void;
   onViewRecommendations?: (messageId: string) => void;
+  onRemoveSuggestions?: (messageId: string) => void;
   showInitialSuggestions?: boolean;
 }
 
@@ -16,6 +17,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
   onButtonClick, 
   onQuestionClick, 
   onViewRecommendations,
+  onRemoveSuggestions,
   showInitialSuggestions = false
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -50,6 +52,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
               onButtonClick={onButtonClick}
               onQuestionClick={onQuestionClick}
               onViewRecommendations={onViewRecommendations}
+              onRemoveSuggestions={onRemoveSuggestions}
             />
           ))
         )}

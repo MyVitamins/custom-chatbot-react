@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 interface SuggestedQuestionsProps {
   onQuestionClick: (question: string) => void;
   questions?: string[];
+  variant?: 'onboarding' | 'dynamic';
 }
 
 const SuggestedQuestions: React.FC<SuggestedQuestionsProps> = ({ 
@@ -14,7 +15,8 @@ const SuggestedQuestions: React.FC<SuggestedQuestionsProps> = ({
     "How do I support my immune system?",
     "What vitamins should I take daily?",
     "Are there supplements for energy and focus?"
-  ]
+  ],
+  variant = 'onboarding'
 }) => {
   // Animation variants for onboarding
   const containerVariants = {
@@ -48,7 +50,41 @@ const SuggestedQuestions: React.FC<SuggestedQuestionsProps> = ({
       }
     }
   };
+
+  // Dynamic variant: pill-style buttons under bot messages
+  if (variant === 'dynamic') {
+    return (
+      <motion.div 
+        className="px-4 py-3 mt-3"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, ease: "easeOut", staggerChildren: 0.1 }}
+      >
+        <motion.div 
+          className="flex flex-wrap gap-2"
+          initial="hidden"
+          animate="visible"
+          variants={containerVariants}
+        >
+          {questions.map((question, index) => (
+            <motion.button
+              key={index}
+              onClick={() => onQuestionClick(question)}
+              className="px-3 py-1.5 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 text-sm rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors duration-200 ease-in-out cursor-pointer"
+              variants={buttonVariants}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              aria-label={`Ask: ${question}`}
+            >
+              {question}
+            </motion.button>
+          ))}
+        </motion.div>
+      </motion.div>
+    );
+  }
   
+  // Onboarding variant: full-width buttons in a section
   return (
     <AnimatePresence mode="wait">
       <motion.div 
@@ -77,6 +113,7 @@ const SuggestedQuestions: React.FC<SuggestedQuestionsProps> = ({
                 variants={buttonVariants}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
+                aria-label={`Ask: ${question}`}
               >
                 {question}
               </motion.button>
