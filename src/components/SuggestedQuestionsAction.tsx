@@ -156,10 +156,10 @@ const SuggestedQuestionsAction: React.FC<SuggestedQuestionsActionProps> = ({
     }
   };
 
-  // Get current questions to display
+  // Get current questions to display (limit popup to 3 questions max)
   const currentQuestions = suggestionSets.length > 0 
-    ? suggestionSets[currentSetIndex] || suggestionSets[0] 
-    : questions;
+    ? (suggestionSets[currentSetIndex] || suggestionSets[0]).slice(0, 3)
+    : questions.slice(0, 3);
 
       // Animation variants for panel
       const panelVariants = {
@@ -320,7 +320,7 @@ const SuggestedQuestionsAction: React.FC<SuggestedQuestionsActionProps> = ({
                 {/* Questions Grid with Swipe Gestures */}
                 <div className="relative overflow-hidden">
                   <div 
-                    className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+                    className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-3xl mx-auto"
                     onTouchStart={handleTouchStart}
                     onTouchMove={handleTouchMove}
                     onTouchEnd={handleTouchEnd}
