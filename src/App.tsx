@@ -15,6 +15,7 @@ function App() {
   const [showInitialSuggestions, setShowInitialSuggestions] = useState(true);
   const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
   const [sidebarState, setSidebarState] = useState<SidebarState>({ isOpen: false, messageId: null });
+  const [showContentTester, setShowContentTester] = useState(false);
 
   const generateId = () => Math.random().toString(36).substr(2, 9);
 
@@ -120,6 +121,7 @@ function App() {
     setMessages([]);
     setShowInitialSuggestions(true);
     setSidebarState({ isOpen: false, messageId: null }); // Clear sidebar when starting new chat
+    setShowContentTester(false); // Hide content tester when starting new chat
   };
 
   const handleViewRecommendations = (messageId: string) => {
@@ -272,13 +274,15 @@ function App() {
                   debugMode={debugMode}
                   onDebugModeChange={setDebugMode}
                   onNewChat={handleNewChat}
+                  showContentTester={showContentTester}
+                  onContentTesterToggle={setShowContentTester}
                 />
               </div>
             </div>
           </div>
       
-      {/* Structured Content Tester - only show when no messages */}
-      {messages.length === 0 && (
+      {/* Structured Content Tester - show when enabled in settings */}
+      {showContentTester && (
         <div className="max-w-4xl mx-auto px-6 py-4">
           <StructuredContentTester onTestContent={handleTestStructuredContent} />
         </div>

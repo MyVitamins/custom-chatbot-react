@@ -4,12 +4,16 @@ interface SettingsDropdownProps {
   debugMode: boolean;
   onDebugModeChange: (enabled: boolean) => void;
   onNewChat: () => void;
+  showContentTester: boolean;
+  onContentTesterToggle: (show: boolean) => void;
 }
 
 const SettingsDropdown: React.FC<SettingsDropdownProps> = ({
   debugMode,
   onDebugModeChange,
-  onNewChat
+  onNewChat,
+  showContentTester,
+  onContentTesterToggle
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -77,6 +81,22 @@ const SettingsDropdown: React.FC<SettingsDropdownProps> = ({
               <div className="flex-1">
                 <span className="text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300 ease-in-out">Debug Mode</span>
                 <p className="text-xs text-gray-500 dark:text-gray-400 transition-colors duration-300 ease-in-out">Show raw BotDojo responses in console</p>
+              </div>
+            </label>
+          </div>
+
+          {/* Content Tester Toggle */}
+          <div className="px-4 py-3">
+            <label className="flex items-center space-x-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={showContentTester}
+                onChange={(e) => onContentTesterToggle(e.target.checked)}
+                className="w-4 h-4 text-blue-600 bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500 focus:ring-2 transition-colors duration-300 ease-in-out"
+              />
+              <div className="flex-1">
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300 ease-in-out">Content Tester</span>
+                <p className="text-xs text-gray-500 dark:text-gray-400 transition-colors duration-300 ease-in-out">Show structured content type testing panel</p>
               </div>
             </label>
           </div>
