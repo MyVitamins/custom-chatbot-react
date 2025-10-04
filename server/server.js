@@ -345,13 +345,39 @@ function normalizeBotDojoResponse(botdojoResponse) {
     
     // Extract text content and parse canvas data
     let textContent = '';
+    let suggestedQuestions = [];
     if (botdojoResponse.response && botdojoResponse.response.text_output) {
       textContent = botdojoResponse.response.text_output;
       
+      // Try to parse JSON format with text and suggestedQuestions
+      try {
+        const parsedContent = JSON.parse(textContent);
+        console.log('=== RESPONSE.TEXT_OUTPUT JSON PARSING ===');
+        console.log('Original textContent:', textContent);
+        console.log('Parsed content:', parsedContent);
+        console.log('Has text field:', !!parsedContent.text);
+        console.log('Text field type:', typeof parsedContent.text);
+        console.log('Has suggestedQuestions:', !!parsedContent.suggestedQuestions);
+        console.log('SuggestedQuestions type:', typeof parsedContent.suggestedQuestions);
+        console.log('=== END RESPONSE.TEXT_OUTPUT JSON PARSING ===');
+        
+        if (parsedContent.text && typeof parsedContent.text === 'string') {
+          textContent = parsedContent.text;
+          if (parsedContent.suggestedQuestions && Array.isArray(parsedContent.suggestedQuestions)) {
+            suggestedQuestions = parsedContent.suggestedQuestions;
+          }
+        }
+      } catch (e) {
+        console.log('Response.text_output JSON parsing failed:', e.message);
+        // Not JSON, continue with original text content
+      }
+      
       // Canvas data is now parsed into structured content, not individual messages
       
-      // Clean up canvas references from text content
-      textContent = cleanTextContent(textContent);
+      // Clean up canvas references from text content (only if not JSON parsed)
+      if (suggestedQuestions.length === 0) {
+        textContent = cleanTextContent(textContent);
+      }
     }
     
     // Collect all structured content (products) for the text message
@@ -388,6 +414,11 @@ function normalizeBotDojoResponse(botdojoResponse) {
         content: { text: textContent }
       };
       
+      // Add suggested questions if available
+      if (suggestedQuestions.length > 0) {
+        textMessage.suggestedQuestions = suggestedQuestions;
+      }
+      
       // Add structured content if we have products
       if (allStructuredContent.length > 0) {
         textMessage.structured = {
@@ -416,7 +447,6 @@ function normalizeBotDojoResponse(botdojoResponse) {
     }
     
     // Extract suggested questions from BotDojo response
-    let suggestedQuestions = [];
     if (botdojoResponse.suggestedQuestions && Array.isArray(botdojoResponse.suggestedQuestions)) {
       suggestedQuestions = botdojoResponse.suggestedQuestions;
     }
