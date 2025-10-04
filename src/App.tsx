@@ -5,6 +5,7 @@ import SettingsDropdown from './components/SettingsDropdown';
 import ThemeToggle from './components/ThemeToggle';
 import SuggestedQuestionsAction from './components/SuggestedQuestionsAction';
 import Sidebar from './components/Sidebar';
+import StructuredContentTester from './components/StructuredContentTester';
 import { type Message, type SidebarState } from './types';
 
 function App() {
@@ -129,6 +130,49 @@ function App() {
     setSidebarState({ isOpen: false, messageId: null });
   };
 
+  const handleTestStructuredContent = async (contentType: string) => {
+    try {
+      setIsLoading(true);
+      const response = await fetch('http://localhost:3001/test-structured', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ contentType }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch test content');
+      }
+
+      const data = await response.json();
+      
+      if (data.messages && Array.isArray(data.messages)) {
+        const testMessages: Message[] = data.messages.map((msg: any) => ({
+          id: msg.id || generateId(),
+          role: msg.role || 'bot',
+          type: msg.type || 'text',
+          content: msg.content || 'Test content',
+          structured: msg.structured || undefined
+        }));
+        
+        setMessages(prev => [...prev, ...testMessages]);
+      }
+    } catch (error) {
+      console.error('Error testing structured content:', error);
+      // Add error message to chat
+      const errorMessage: Message = {
+        id: generateId(),
+        role: 'bot',
+        type: 'text',
+        content: { text: 'Sorry, there was an error loading the test content.' }
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleRefreshSuggestions = async () => {
     if (messages.length === 0) return;
     
@@ -232,6 +276,13 @@ function App() {
               </div>
             </div>
           </div>
+      
+      {/* Structured Content Tester - only show when no messages */}
+      {messages.length === 0 && (
+        <div className="max-w-4xl mx-auto px-6 py-4">
+          <StructuredContentTester onTestContent={handleTestStructuredContent} />
+        </div>
+      )}
       
       <ChatWindow 
         messages={messages} 

@@ -914,6 +914,178 @@ function extractSuggestedQuestions(botdojoResponse) {
   return suggestions;
 }
 
+// Test endpoint for different structured content types
+app.post('/test-structured', (req, res) => {
+  const { contentType } = req.body;
+  
+  let testMessage;
+  
+  switch (contentType) {
+    case 'guide':
+      testMessage = {
+        id: `msg-${Date.now()}-guide`,
+        role: 'bot',
+        type: 'text',
+        content: {
+          text: "Here's a comprehensive guide for better sleep hygiene:"
+        },
+        structured: {
+          type: 'guide',
+          data: [
+            { step: "Go to bed at the same time every night, even on weekends" },
+            { step: "Reduce screen time 1 hour before bedtime" },
+            { step: "Create a cool, dark, and quiet sleep environment" },
+            { step: "Avoid caffeine after 2 PM" },
+            { step: "Practice relaxation techniques like deep breathing" },
+            { step: "Limit naps to 20-30 minutes and avoid late afternoon naps" }
+          ]
+        }
+      };
+      break;
+      
+    case 'faq':
+      testMessage = {
+        id: `msg-${Date.now()}-faq`,
+        role: 'bot',
+        type: 'text',
+        content: {
+          text: "Here are some frequently asked questions about supplements:"
+        },
+        structured: {
+          type: 'faq',
+          data: [
+            { 
+              question: "What is ashwagandha?", 
+              answer: "Ashwagandha is an adaptogenic herb that supports stress response and helps the body adapt to physical and mental stress. It's commonly used for anxiety, sleep, and energy support." 
+            },
+            { 
+              question: "Are supplements safe to take?", 
+              answer: "Supplements can be safe when taken as directed, but it depends on the product quality, individual needs, and interactions with medications. Always consult with a healthcare practitioner before starting new supplements." 
+            },
+            { 
+              question: "How long does it take for supplements to work?", 
+              answer: "Most supplements take 2-4 weeks to show noticeable effects, though some may work faster or slower depending on the individual and the specific supplement. Consistency is key for best results." 
+            },
+            { 
+              question: "Can I take multiple supplements together?", 
+              answer: "Many supplements can be taken together, but some may interact with each other or with medications. It's important to research interactions and consult with a healthcare provider about your specific supplement regimen." 
+            }
+          ]
+        }
+      };
+      break;
+      
+    case 'labResult':
+      testMessage = {
+        id: `msg-${Date.now()}-lab`,
+        role: 'bot',
+        type: 'text',
+        content: {
+          text: "Here's a summary of your recent lab results:"
+        },
+        structured: {
+          type: 'labResult',
+          data: [
+            { 
+              label: "Vitamin D", 
+              value: "34 ng/mL", 
+              range: "30–100 ng/mL",
+              status: "Low",
+              note: "Consider supplementation, especially during winter months"
+            },
+            { 
+              label: "Iron", 
+              value: "55 µg/dL", 
+              range: "50–170 µg/dL",
+              status: "Normal",
+              note: "Within healthy range"
+            },
+            { 
+              label: "B12", 
+              value: "450 pg/mL", 
+              range: "200–900 pg/mL",
+              status: "Normal",
+              note: "Adequate levels for energy and nerve function"
+            },
+            { 
+              label: "Magnesium", 
+              value: "1.8 mg/dL", 
+              range: "1.7–2.2 mg/dL",
+              status: "Normal",
+              note: "Good levels for muscle and nerve function"
+            }
+          ]
+        }
+      };
+      break;
+      
+    case 'image':
+      testMessage = {
+        id: `msg-${Date.now()}-image`,
+        role: 'bot',
+        type: 'text',
+        content: {
+          text: "Here are some helpful diagrams for understanding sleep cycles:"
+        },
+        structured: {
+          type: 'image',
+          data: [
+            {
+              url: "https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?w=400",
+              alt: "Sleep cycle diagram",
+              caption: "Understanding the 4 stages of sleep"
+            },
+            {
+              url: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400",
+              alt: "Circadian rhythm chart",
+              caption: "Natural sleep-wake cycle over 24 hours"
+            }
+          ]
+        }
+      };
+      break;
+      
+    case 'linkList':
+      testMessage = {
+        id: `msg-${Date.now()}-links`,
+        role: 'bot',
+        type: 'text',
+        content: {
+          text: "Here are some helpful resources for learning more about sleep health:"
+        },
+        structured: {
+          type: 'linkList',
+          data: [
+            {
+              title: "National Sleep Foundation",
+              description: "Comprehensive sleep health information and guidelines",
+              url: "https://www.sleepfoundation.org",
+              icon: "https://www.sleepfoundation.org/favicon.ico"
+            },
+            {
+              title: "Sleep Education by AASM",
+              description: "Educational resources from the American Academy of Sleep Medicine",
+              url: "https://sleepeducation.org",
+              icon: "https://sleepeducation.org/favicon.ico"
+            },
+            {
+              title: "CDC Sleep and Health",
+              description: "Government resources on sleep and public health",
+              url: "https://www.cdc.gov/sleep",
+              icon: "https://www.cdc.gov/favicon.ico"
+            }
+          ]
+        }
+      };
+      break;
+      
+    default:
+      return res.status(400).json({ error: 'Invalid content type' });
+  }
+  
+  res.json({ messages: [testMessage] });
+});
+
 // Start server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
@@ -921,6 +1093,7 @@ app.listen(PORT, () => {
   console.log(`Chat endpoint: http://localhost:${PORT}/chat`);
   console.log(`Debug endpoint: http://localhost:${PORT}/debug-botdojo`);
   console.log(`Suggestions endpoint: http://localhost:${PORT}/suggestions`);
+  console.log(`Test structured endpoint: http://localhost:${PORT}/test-structured`);
   console.log('Make sure to set BOTDOJO_API_KEY, BOTDOJO_BASE_URL, and BOTDOJO_FLOW_ID environment variables');
 });
 
