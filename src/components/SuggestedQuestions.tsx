@@ -108,6 +108,14 @@ const SuggestedQuestions: React.FC<SuggestedQuestionsProps> = ({
           animate="visible"
           exit="exit"
         >
+          {/* Related Questions Header */}
+          <motion.div 
+            className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2"
+            variants={pillVariants}
+          >
+            Related Questions
+          </motion.div>
+          
           <motion.div 
             className="flex flex-wrap gap-2"
             variants={pillContainerVariants}
