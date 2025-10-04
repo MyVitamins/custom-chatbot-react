@@ -16,6 +16,7 @@ function App() {
   const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
   const [sidebarState, setSidebarState] = useState<SidebarState>({ isOpen: false, messageId: null });
   const [showContentTester, setShowContentTester] = useState(false);
+  const [abortController, setAbortController] = useState<AbortController | null>(null);
 
   const generateId = () => Math.random().toString(36).substr(2, 9);
 
@@ -44,6 +45,10 @@ function App() {
     setMessages(prev => [...prev, userMessage, typingMessage]);
     setIsLoading(true);
 
+    // Create new AbortController for this request
+    const controller = new AbortController();
+    setAbortController(controller);
+
     try {
       // Send message to backend server
       const response = await fetch('http://localhost:3001/chat', {
@@ -52,6 +57,7 @@ function App() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ message: content }),
+        signal: controller.signal,
       });
 
       if (!response.ok) {
@@ -99,24 +105,47 @@ function App() {
       });
     } catch (error) {
       console.error('Error sending message:', error);
-      // Remove typing indicator and add error message
-      setMessages(prev => {
-        const messagesWithoutTyping = prev.filter(msg => msg.id !== 'typing');
-        const errorMessage: Message = {
-          id: generateId(),
-          role: 'bot',
-          type: 'text',
-          content: { text: 'Sorry, there was an error processing your message. Please try again.' }
-        };
-        return [...messagesWithoutTyping, errorMessage];
-      });
+      
+      // Check if the request was aborted
+      if (error instanceof Error && error.name === 'AbortError') {
+        // Remove typing indicator and add cancellation message
+        setMessages(prev => {
+          const messagesWithoutTyping = prev.filter(msg => msg.id !== 'typing');
+          const cancelledMessage: Message = {
+            id: generateId(),
+            role: 'bot',
+            type: 'text',
+            content: { text: 'Generation stopped.' }
+          };
+          return [...messagesWithoutTyping, cancelledMessage];
+        });
+      } else {
+        // Remove typing indicator and add error message
+        setMessages(prev => {
+          const messagesWithoutTyping = prev.filter(msg => msg.id !== 'typing');
+          const errorMessage: Message = {
+            id: generateId(),
+            role: 'bot',
+            type: 'text',
+            content: { text: 'Sorry, there was an error processing your message. Please try again.' }
+          };
+          return [...messagesWithoutTyping, errorMessage];
+        });
+      }
     } finally {
       setIsLoading(false);
+      setAbortController(null);
     }
   };
 
   const handleButtonClick = async (value: string) => {
     await sendMessage(value);
+  };
+
+  const cancelRequest = () => {
+    if (abortController) {
+      abortController.abort();
+    }
   };
 
   const handleNewChat = () => {
@@ -325,6 +354,8 @@ function App() {
       <InputBar 
         onSendMessage={sendMessage} 
         disabled={isLoading}
+        isLoading={isLoading}
+        onCancel={cancelRequest}
       />
 
       {/* Sidebar */}

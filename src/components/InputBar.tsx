@@ -3,9 +3,11 @@ import React, { useState } from 'react';
 interface InputBarProps {
   onSendMessage: (message: string) => void;
   disabled?: boolean;
+  isLoading?: boolean;
+  onCancel?: () => void;
 }
 
-const InputBar: React.FC<InputBarProps> = ({ onSendMessage, disabled = false }) => {
+const InputBar: React.FC<InputBarProps> = ({ onSendMessage, disabled = false, isLoading = false, onCancel }) => {
   const [message, setMessage] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -36,13 +38,24 @@ const InputBar: React.FC<InputBarProps> = ({ onSendMessage, disabled = false }) 
             disabled={disabled}
             className="flex-1 px-4 py-2 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder-gray-400 rounded-full focus:outline-none focus:border-transparent disabled:bg-gray-100 dark:disabled:bg-gray-700 disabled:cursor-not-allowed text-base transition-colors duration-300 ease-in-out"
           />
-          <button
-            type="submit"
-            disabled={disabled || !message.trim()}
-            className="px-5 py-2 bg-[#2563EB] text-white rounded-full hover:bg-blue-600 disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed transition-colors duration-300 ease-in-out font-medium"
-          >
-            Send
-          </button>
+          {isLoading ? (
+            <button
+              type="button"
+              onClick={onCancel}
+              className="px-4 py-2 bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 text-white rounded-full font-medium transition-colors duration-300 ease-in-out animate-pulse"
+              aria-label="Stop generating response"
+            >
+              Stop
+            </button>
+          ) : (
+            <button
+              type="submit"
+              disabled={disabled || !message.trim()}
+              className="px-5 py-2 bg-[#2563EB] text-white rounded-full hover:bg-blue-600 disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed transition-colors duration-300 ease-in-out font-medium"
+            >
+              Send
+            </button>
+          )}
         </form>
       </div>
     </div>
