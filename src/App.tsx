@@ -51,7 +51,7 @@ function App() {
 
     try {
       // Send message to backend server
-      const response = await fetch('http://localhost:3001/chat', {
+      const response = await fetch('/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -166,7 +166,7 @@ function App() {
   const handleTestStructuredContent = async (contentType: string) => {
     try {
       setIsLoading(true);
-      const response = await fetch('http://localhost:3001/test-structured', {
+      const response = await fetch('/test-structured', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -212,7 +212,7 @@ function App() {
     setIsLoadingSuggestions(true);
     try {
       // Send a request to get fresh suggestions
-      const response = await fetch('http://localhost:3001/chat', {
+      const response = await fetch('/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -306,7 +306,7 @@ function App() {
           {/* Header - floating style */}
           <div className="px-6 py-4 transition-colors duration-300 ease-in-out">
             <div className="flex justify-between items-center max-w-4xl mx-auto">
-              <h1 className="text-lg font-semibold text-gray-800 dark:text-gray-100 transition-colors duration-300 ease-in-out">ChatBot</h1>
+              <h1 className="text-lg font-semibold text-gray-800 dark:text-gray-100 transition-colors duration-300 ease-in-out">Ask Dr. Juergen</h1>
               <div className="flex items-center gap-2">
                 <ThemeToggle />
                 <SettingsDropdown

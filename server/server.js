@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 3001;
 
 // Middleware
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://127.0.0.1:5173'],
+  origin: ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://chatbot-demo-alb-895393060.us-east-1.elb.amazonaws.com'],
   credentials: true
 }));
 app.use(express.json());
@@ -16,12 +16,40 @@ app.use(express.json());
 // Serve static files from the public directory
 app.use(express.static('public'));
 
-// BotDojo API configuration - using correct values from working curl command
-const BOTDOJO_API_KEY = 'd79fa8f7-d776-431e-8fbc-56f47deb79d5';
-const BOTDOJO_ACCOUNT_ID = 'afa02f70-4182-11f0-a4dd-cb9f7db4f88a';
-const BOTDOJO_PROJECT_ID = 'cbeee3b0-4182-11f0-b112-85b41bbb6a74';
-const BOTDOJO_FLOW_ID = '596f6181-5c0c-11f0-86ab-7561582ecdb8';
-const BOTDOJO_BASE_URL = 'https://api.botdojo.com/api/v1';
+// BotDojo API configuration - read from environment variables
+const BOTDOJO_API_KEY = process.env.BOTDOJO_API_KEY;
+const BOTDOJO_ACCOUNT_ID = process.env.BOTDOJO_ACCOUNT_ID;
+const BOTDOJO_PROJECT_ID = process.env.BOTDOJO_PROJECT_ID;
+const BOTDOJO_FLOW_ID = process.env.BOTDOJO_FLOW_ID;
+const BOTDOJO_BASE_URL = process.env.BOTDOJO_BASE_URL;
+
+// Validate required environment variables
+if (!BOTDOJO_API_KEY) {
+  console.error('BotDojo API credentials not found: BOTDOJO_API_KEY is required');
+  process.exit(1);
+}
+
+if (!BOTDOJO_BASE_URL) {
+  console.error('BotDojo API credentials not found: BOTDOJO_BASE_URL is required');
+  process.exit(1);
+}
+
+if (!BOTDOJO_ACCOUNT_ID) {
+  console.error('BotDojo API credentials not found: BOTDOJO_ACCOUNT_ID is required');
+  process.exit(1);
+}
+
+if (!BOTDOJO_PROJECT_ID) {
+  console.error('BotDojo API credentials not found: BOTDOJO_PROJECT_ID is required');
+  process.exit(1);
+}
+
+if (!BOTDOJO_FLOW_ID) {
+  console.error('BotDojo API credentials not found: BOTDOJO_FLOW_ID is required');
+  process.exit(1);
+}
+
+console.log('BotDojo API credentials loaded successfully');
 
 // Helper function to parse canvas data from text content and return structured content objects
 function parseCanvasDataForStructuredContent(textContent) {

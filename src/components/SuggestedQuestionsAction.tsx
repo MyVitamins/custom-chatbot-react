@@ -57,7 +57,7 @@ const SuggestedQuestionsAction: React.FC<SuggestedQuestionsActionProps> = ({
   const loadSuggestionSets = async () => {
     setIsLoadingSets(true);
     try {
-      const response = await fetch('http://localhost:3001/suggestions', {
+      const response = await fetch('/suggestions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
