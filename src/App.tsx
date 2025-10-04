@@ -79,6 +79,7 @@ function App() {
             role: msg.role || 'bot',
             type: msg.type || 'text',
             content: msg.content || 'Sorry, I could not process your message.',
+            suggestedQuestions: msg.suggestedQuestions || undefined,
             structured: msg.structured || undefined
           }));
           
@@ -89,7 +90,8 @@ function App() {
             id: generateId(),
             role: 'bot',
             type: data.type || 'text',
-            content: data.content || 'Sorry, I could not process your message.'
+            content: data.content || 'Sorry, I could not process your message.',
+            suggestedQuestions: data.suggestedQuestions || undefined
           };
           
           return [...messagesWithoutTyping, botMessage];
