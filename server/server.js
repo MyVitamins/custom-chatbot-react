@@ -5,6 +5,7 @@ const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch
 const cors = require('cors');
 
 const app = express();
+const { isLikelyImage, normalizeImageUrl, pickBestImageUrl } = require('./mediaUtils');
 const PORT = process.env.PORT || 3001;
 
 // Middleware
@@ -417,12 +418,13 @@ function normalizeBotDojoResponse(botdojoResponse) {
           if (parsedContent.products && Array.isArray(parsedContent.products)) {
             console.log('Processing products from JSON:', parsedContent.products.length);
             parsedContent.products.forEach(product => {
+              const normalized = normalizeImageUrl(product.imageUrl || product.image || '');
+              const safeImageUrl = isLikelyImage(normalized) ? normalized : undefined;
               allStructuredContent.push({
                 sku: product.sku || 'UNKNOWN',
                 productId: product.productId || product.id || 'UNKNOWN',
                 title: product.name || product.title || `Product: ${product.sku}`,
-                image: product.imageUrl || product.image || undefined,
-                imageUrl: product.imageUrl || product.image || undefined,
+                imageUrl: safeImageUrl,
                 description: product.description || undefined,
                 url: product.url || `https://uat.gethealthy.store/botdojo/product?sku=${product.sku}&pid=${product.productId || product.id}`
               });
@@ -447,14 +449,16 @@ function normalizeBotDojoResponse(botdojoResponse) {
       try {
         const args = JSON.parse(step.arguments);
         if (args.sku && args.entity_id) {
+          const raw = step.canvas?.canvasData?.url || '';
+          const normalized = normalizeImageUrl(raw);
+          const safeImageUrl = isLikelyImage(normalized) ? normalized : undefined;
           allStructuredContent.push({
             sku: args.sku,
             productId: args.entity_id,
             title: `Product: ${args.sku}`,
-            image: step.canvas?.canvasData?.url || undefined,
-            imageUrl: step.canvas?.canvasData?.url || undefined,
+            imageUrl: safeImageUrl,
             description: undefined, // Will be populated if available from BotDojo
-            url: step.canvas?.canvasData?.url || `https://uat.gethealthy.store/botdojo/product?sku=${args.sku}&pid=${args.entity_id}`
+            url: `https://uat.gethealthy.store/botdojo/product?sku=${args.sku}&pid=${args.entity_id}`
           });
         }
       } catch (e) {
@@ -465,6 +469,40 @@ function normalizeBotDojoResponse(botdojoResponse) {
     // Parse canvas data directly into structured content (no individual messages)
     const canvasProducts = parseCanvasDataForStructuredContent(textContent);
     allStructuredContent.push(...canvasProducts);
+
+    // Normalize and sanitize product entries (imageUrl only, no deep links)
+    for (let i = 0; i < allStructuredContent.length; i++) {
+      const p = allStructuredContent[i];
+      const candidate = p.imageUrl || p.image || '';
+      const normalized = normalizeImageUrl(candidate || '');
+      const safe = isLikelyImage(normalized) ? normalized : undefined;
+      delete p.image;
+      p.imageUrl = safe;
+    }
+
+    // De-duplicate by SKU, prefer entries with imageUrl and longer description
+    const dedupedBySku = Object.values(allStructuredContent.reduce((acc, item) => {
+      const sku = item.sku || 'UNKNOWN';
+      if (!acc[sku]) {
+        acc[sku] = item;
+      } else {
+        const cur = acc[sku];
+        const curHasImg = !!cur.imageUrl;
+        const newHasImg = !!item.imageUrl;
+        const curDescLen = (cur.description || '').length;
+        const newDescLen = (item.description || '').length;
+        if ((!curHasImg && newHasImg) || (curHasImg === newHasImg && newDescLen > curDescLen)) {
+          acc[sku] = item;
+        }
+      }
+      return acc;
+    }, {}));
+
+    // Optional debug: log first product image before sending (non-production only)
+    if (process.env.NODE_ENV !== 'production' && dedupedBySku.length > 0) {
+      const ex = dedupedBySku[0];
+      console.debug('[media] example imageUrl:', ex.imageUrl);
+    }
 
     // Add text message if there's content
     if (textContent) {

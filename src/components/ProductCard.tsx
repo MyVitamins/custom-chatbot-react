@@ -26,18 +26,18 @@ const ProductCard: React.FC<ProductCardProps> = ({
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-soft-sm dark:shadow-dark-sm hover:shadow-soft-md dark:hover:shadow-dark-md hover:scale-105 transition-all duration-200 ease-in-out">
       {/* Product Image */}
       {productImage && (
-        <div className="w-full h-48 bg-gray-100 dark:bg-gray-700 rounded-t-xl overflow-hidden">
+        <div className="w-full h-56 bg-white dark:bg-gray-800 rounded-t-xl overflow-hidden flex items-center justify-center">
           <img
             src={productImage}
             alt={displayTitle}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-contain"
           />
         </div>
       )}
 
       {/* Product Image Placeholder (only if no image) */}
       {!productImage && (
-        <div className="w-full h-48 bg-gray-100 dark:bg-gray-700 rounded-t-xl overflow-hidden">
+        <div className="w-full h-56 bg-white dark:bg-gray-800 rounded-t-xl overflow-hidden">
           <div className="w-full h-full flex items-center justify-center">
             <svg
               className="w-12 h-12 text-gray-400 dark:text-gray-500"
