@@ -380,13 +380,16 @@ function normalizeBotDojoResponse(botdojoResponse) {
       step.stepLabel === 'ShowProductCardTool' && step.arguments
     );
     
+    // Collect all structured content (products) for the text message
+    const allStructuredContent = [];
+    
     // Extract text content and parse canvas data
     let textContent = '';
     let suggestedQuestions = [];
     if (botdojoResponse.response && botdojoResponse.response.text_output) {
       textContent = botdojoResponse.response.text_output;
       
-      // Try to parse JSON format with text and suggestedQuestions
+      // Try to parse JSON format with text, suggestedQuestions, and products
       try {
         const parsedContent = JSON.parse(textContent);
         console.log('=== RESPONSE.TEXT_OUTPUT JSON PARSING ===');
@@ -396,12 +399,30 @@ function normalizeBotDojoResponse(botdojoResponse) {
         console.log('Text field type:', typeof parsedContent.text);
         console.log('Has suggestedQuestions:', !!parsedContent.suggestedQuestions);
         console.log('SuggestedQuestions type:', typeof parsedContent.suggestedQuestions);
+        console.log('Has products:', !!parsedContent.products);
+        console.log('Products type:', typeof parsedContent.products);
         console.log('=== END RESPONSE.TEXT_OUTPUT JSON PARSING ===');
         
         if (parsedContent.text && typeof parsedContent.text === 'string') {
           textContent = parsedContent.text;
           if (parsedContent.suggestedQuestions && Array.isArray(parsedContent.suggestedQuestions)) {
             suggestedQuestions = parsedContent.suggestedQuestions;
+          }
+          
+          // Process products into structured content
+          if (parsedContent.products && Array.isArray(parsedContent.products)) {
+            console.log('Processing products from JSON:', parsedContent.products.length);
+            parsedContent.products.forEach(product => {
+              allStructuredContent.push({
+                sku: product.sku || 'UNKNOWN',
+                productId: product.productId || product.id || 'UNKNOWN',
+                title: product.name || product.title || `Product: ${product.sku}`,
+                image: product.imageUrl || product.image || undefined,
+                imageUrl: product.imageUrl || product.image || undefined,
+                description: product.description || undefined,
+                url: product.url || `https://uat.gethealthy.store/botdojo/product?sku=${product.sku}&pid=${product.productId || product.id}`
+              });
+            });
           }
         }
       } catch (e) {
@@ -416,9 +437,6 @@ function normalizeBotDojoResponse(botdojoResponse) {
         textContent = cleanTextContent(textContent);
       }
     }
-    
-    // Collect all structured content (products) for the text message
-    const allStructuredContent = [];
     
     // Add product cards (normalized to unified product format)
     productCardSteps.forEach(step => {

@@ -15,6 +15,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, messageId, messages 
   const message = messageId ? messages.find(msg => msg.id === messageId) : null;
   const structuredContent = message?.structured;
   
+  
   // Generate title based on structured content type
   const getTitle = () => {
     if (!structuredContent) return 'Details';
@@ -52,15 +53,15 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, messageId, messages 
           />
           
           {/* Sidebar */}
-          <motion.div
-            className="fixed top-0 right-0 h-full w-full md:w-96 bg-white dark:bg-gray-900 shadow-xl z-50 md:shadow-2xl"
+          <motion.aside
+            className="sidebar-container fixed top-0 right-0 w-full md:w-[400px] bg-white dark:bg-neutral-900 border-l border-gray-200 dark:border-neutral-800 shadow-xl z-50 md:shadow-2xl"
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
           >
-            {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+            {/* Fixed Header */}
+            <div className="flex-shrink-0 bg-white dark:bg-neutral-900 border-b border-gray-100 dark:border-neutral-800 px-4 py-3 flex items-center justify-between">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                 {title}
               </h2>
@@ -86,14 +87,14 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, messageId, messages 
               </button>
             </div>
 
-            {/* Content */}
-            <div className="flex-1 overflow-y-auto p-4">
+            {/* Scrollable Content Area */}
+            <div className="sidebar-content sidebar-scroll px-4 py-3 space-y-4 scroll-smooth">
               <SidebarContentRenderer 
                 type={structuredContent.type} 
                 data={structuredContent.data} 
               />
             </div>
-          </motion.div>
+          </motion.aside>
         </>
       )}
     </AnimatePresence>
