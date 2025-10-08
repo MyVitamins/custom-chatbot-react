@@ -99,6 +99,8 @@ function parseCanvasDataForStructuredContent(textContent) {
                 productId: parseInt(productId),
                 title: `Product: ${sku}`,
                 image: url,
+                imageUrl: url,
+                description: undefined,
                 url: url
               });
             }
@@ -122,6 +124,8 @@ function parseCanvasDataForStructuredContent(textContent) {
                 productId: parseInt(productId),
                 title: `Product: ${sku}`,
                 image: url,
+                imageUrl: url,
+                description: undefined,
                 url: url
               });
             }
@@ -159,6 +163,8 @@ function parseCanvasDataForStructuredContent(textContent) {
               productId: parseInt(productId),
               title: `Product: ${sku}`,
               image: canvasData.url,
+              imageUrl: canvasData.url,
+              description: undefined,
               url: canvasData.url
             });
           }
@@ -424,6 +430,8 @@ function normalizeBotDojoResponse(botdojoResponse) {
             productId: args.entity_id,
             title: `Product: ${args.sku}`,
             image: step.canvas?.canvasData?.url || undefined,
+            imageUrl: step.canvas?.canvasData?.url || undefined,
+            description: undefined, // Will be populated if available from BotDojo
             url: step.canvas?.canvasData?.url || `https://uat.gethealthy.store/botdojo/product?sku=${args.sku}&pid=${args.entity_id}`
           });
         }
@@ -1226,6 +1234,45 @@ app.post('/test-structured', (req, res) => {
               description: "Government resources on sleep and public health",
               url: "https://www.cdc.gov/sleep",
               icon: "https://www.cdc.gov/favicon.ico"
+            }
+          ]
+        }
+      };
+      break;
+      
+    case 'product':
+      testMessage = {
+        id: `msg-${Date.now()}-products`,
+        role: 'bot',
+        type: 'text',
+        content: {
+          text: "Here are some recommended supplements for better sleep and stress relief:"
+        },
+        structured: {
+          type: 'product',
+          data: [
+            {
+              sku: "MAG-001",
+              productId: "12345",
+              title: "Magnesium Glycinate",
+              imageUrl: "https://via.placeholder.com/400x300/4F46E5/FFFFFF?text=Magnesium+Glycinate",
+              description: "High-quality magnesium glycinate for better sleep and muscle relaxation. This chelated form is highly bioavailable and gentle on the stomach.",
+              url: "https://example.com/product/mag-001"
+            },
+            {
+              sku: "ASH-002",
+              productId: "12346",
+              title: "Ashwagandha Root Extract",
+              imageUrl: "https://via.placeholder.com/400x300/059669/FFFFFF?text=Ashwagandha",
+              description: "Adaptogenic herb that helps reduce stress and anxiety while supporting healthy cortisol levels and sleep quality.",
+              url: "https://example.com/product/ash-002"
+            },
+            {
+              sku: "MEL-003",
+              productId: "12347",
+              title: "Melatonin 3mg",
+              description: "Natural sleep hormone supplement to help regulate your sleep-wake cycle and improve sleep onset.",
+              url: "https://example.com/product/mel-003"
             }
           ]
         }
