@@ -1,7 +1,6 @@
-import React, { useEffect, useRef } from 'react';
-import MessageRenderer from './MessageRenderer';
-import SuggestedQuestions from './SuggestedQuestions';
-import { type Message } from '../types';
+import React, { useEffect, useRef } from "react";
+import { MessageRenderer } from "./MessageRenderer";
+import { type Message } from "../types";
 
 interface ChatWindowProps {
   messages: Message[];
@@ -11,17 +10,17 @@ interface ChatWindowProps {
   onRemoveSuggestions?: (messageId: string) => void;
 }
 
-const ChatWindow: React.FC<ChatWindowProps> = ({ 
-  messages, 
-  onButtonClick, 
-  onQuestionClick, 
+export const ChatWindow: React.FC<ChatWindowProps> = ({
+  messages,
+  onButtonClick,
+  onQuestionClick,
   onViewRecommendations,
-  onRemoveSuggestions
+  onRemoveSuggestions,
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   useEffect(() => {
@@ -29,7 +28,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
   }, [messages]);
 
   return (
-    <div 
+    <div
       className="flex-1 overflow-y-auto"
       role="log"
       aria-label="Chat conversation"
@@ -42,9 +41,14 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
             {/* Introduction Message */}
             <div className="px-4 py-3" role="banner">
               <div className="text-base leading-relaxed text-gray-800 dark:text-gray-100 whitespace-pre-wrap transition-colors duration-300 ease-in-out">
-                Hi, I'm your supplement discovery assistant. I can help you find the right products based on your goals, health concerns, or ingredient preferences. Whether you're curious about which supplements support sleep, stress relief, immune health, or energy, I'll guide you toward options that match your needs.
-
-                You can ask about specific conditions, ingredients, or general wellness goals — and I'll provide tailored product recommendations.
+                Hi, I'm your supplement discovery assistant. I can help you find
+                the right products based on your goals, health concerns, or
+                ingredient preferences. Whether you're curious about which
+                supplements support sleep, stress relief, immune health, or
+                energy, I'll guide you toward options that match your needs. You
+                can ask about specific conditions, ingredients, or general
+                wellness goals — and I'll provide tailored product
+                recommendations.
               </div>
             </div>
 
@@ -53,12 +57,16 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
               <div className="space-y-4">
                 <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
                   <h2 className="sr-only">Suggested starter questions</h2>
-                  <div className="grid gap-3" role="group" aria-label="Suggested starter questions">
+                  <div
+                    className="grid gap-3"
+                    role="group"
+                    aria-label="Suggested starter questions"
+                  >
                     {[
                       "What supplements can help with sleep?",
                       "What can I take for stress?",
                       "How do I support my immune system?",
-                      "What are the best energy supplements?"
+                      "What are the best energy supplements?",
                     ].map((question, index) => (
                       <button
                         key={index}
@@ -99,5 +107,3 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
     </div>
   );
 };
-
-export default ChatWindow;

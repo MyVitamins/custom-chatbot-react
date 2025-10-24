@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 interface InputBarProps {
   onSendMessage: (message: string) => void;
@@ -7,19 +7,24 @@ interface InputBarProps {
   onCancel?: () => void;
 }
 
-const InputBar: React.FC<InputBarProps> = ({ onSendMessage, disabled = false, isLoading = false, onCancel }) => {
-  const [message, setMessage] = useState('');
+export const InputBar: React.FC<InputBarProps> = ({
+  onSendMessage,
+  disabled = false,
+  isLoading = false,
+  onCancel,
+}) => {
+  const [message, setMessage] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (message.trim() && !disabled) {
       onSendMessage(message.trim());
-      setMessage('');
+      setMessage("");
     }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSubmit(e);
     }
@@ -28,8 +33,8 @@ const InputBar: React.FC<InputBarProps> = ({ onSendMessage, disabled = false, is
   return (
     <div className="px-6 py-4 transition-colors duration-300 ease-in-out">
       <div className="max-w-4xl mx-auto">
-        <form 
-          onSubmit={handleSubmit} 
+        <form
+          onSubmit={handleSubmit}
           className="flex gap-3 p-4 bg-white dark:bg-gray-800 rounded-full shadow-soft-md dark:shadow-dark-md hover:shadow-soft-lg dark:hover:shadow-dark-lg focus-within:shadow-soft-lg dark:focus-within:shadow-dark-lg transition-shadow duration-200 ease-in-out"
           role="form"
           aria-label="Chat message input"
@@ -51,7 +56,8 @@ const InputBar: React.FC<InputBarProps> = ({ onSendMessage, disabled = false, is
             maxLength={1000}
           />
           <div id="input-help" className="sr-only">
-            Press Enter to send, Shift+Enter for new line. Maximum 1000 characters.
+            Press Enter to send, Shift+Enter for new line. Maximum 1000
+            characters.
           </div>
           {isLoading ? (
             <button
@@ -68,7 +74,9 @@ const InputBar: React.FC<InputBarProps> = ({ onSendMessage, disabled = false, is
               type="submit"
               disabled={disabled || !message.trim()}
               className="px-5 py-2 bg-[#2563EB] text-white rounded-full hover:bg-blue-600 disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed transition-colors duration-300 ease-in-out font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-              aria-label={message.trim() ? `Send message: ${message}` : 'Send message'}
+              aria-label={
+                message.trim() ? `Send message: ${message}` : "Send message"
+              }
               aria-describedby="send-help"
             >
               Send
@@ -85,5 +93,3 @@ const InputBar: React.FC<InputBarProps> = ({ onSendMessage, disabled = false, is
     </div>
   );
 };
-
-export default InputBar;

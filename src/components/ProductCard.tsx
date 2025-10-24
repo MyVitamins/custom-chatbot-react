@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface ProductCardProps {
   sku: string;
@@ -10,14 +10,14 @@ interface ProductCardProps {
   url: string;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ 
-  sku, 
-  productId, 
-  title, 
-  image, 
+export const ProductCard: React.FC<ProductCardProps> = ({
+  sku,
+  productId,
+  title,
+  image,
   imageUrl,
   description,
-  url 
+  url,
 }) => {
   const displayTitle = title || `Product: ${sku}`;
   const productImage = imageUrl || image;
@@ -63,19 +63,19 @@ const ProductCard: React.FC<ProductCardProps> = ({
         <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100 mb-2 leading-tight transition-colors duration-300 ease-in-out">
           {displayTitle}
         </h3>
-        
+
         {/* Product Description */}
         {description && (
           <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed transition-colors duration-300 ease-in-out mb-3 line-clamp-2">
             {description}
           </p>
         )}
-        
+
         {/* SKU and Product ID */}
         <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed transition-colors duration-300 ease-in-out mb-3">
           SKU: {sku} | Product ID: {productId}
         </p>
-        
+
         {/* View Product Button */}
         <a
           href={url}
@@ -103,5 +103,3 @@ const ProductCard: React.FC<ProductCardProps> = ({
     </div>
   );
 };
-
-export default ProductCard;

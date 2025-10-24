@@ -1,14 +1,17 @@
-import React from 'react';
-import ProductCard from './ProductCard';
+import React from "react";
+import { ProductCard } from "./ProductCard";
 
 interface SidebarContentRendererProps {
-  type: 'product' | 'guide' | 'faq' | 'labResult' | 'image' | 'linkList';
+  type: "product" | "guide" | "faq" | "labResult" | "image" | "linkList";
   data: any[];
 }
 
-const SidebarContentRenderer: React.FC<SidebarContentRendererProps> = ({ type, data }) => {
+export const SidebarContentRenderer: React.FC<SidebarContentRendererProps> = ({
+  type,
+  data,
+}) => {
   switch (type) {
-    case 'product':
+    case "product":
       return (
         <div className="grid grid-cols-1 gap-4">
           {data.map((product, index) => (
@@ -17,11 +20,14 @@ const SidebarContentRenderer: React.FC<SidebarContentRendererProps> = ({ type, d
         </div>
       );
 
-    case 'guide':
+    case "guide":
       return (
         <div className="space-y-4">
           {data.map((step, index) => (
-            <div key={index} className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            <div
+              key={index}
+              className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg"
+            >
               <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
                 Step {index + 1}
               </h4>
@@ -33,7 +39,7 @@ const SidebarContentRenderer: React.FC<SidebarContentRendererProps> = ({ type, d
         </div>
       );
 
-    case 'faq':
+    case "faq":
       return (
         <div className="space-y-3">
           {data.map((faq, index) => (
@@ -48,7 +54,12 @@ const SidebarContentRenderer: React.FC<SidebarContentRendererProps> = ({ type, d
                   stroke="currentColor"
                   viewBox="0 0 24 24"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
                 </svg>
               </summary>
               <div className="p-3 pt-0 text-sm text-gray-700 dark:text-gray-300">
@@ -59,11 +70,14 @@ const SidebarContentRenderer: React.FC<SidebarContentRendererProps> = ({ type, d
         </div>
       );
 
-    case 'labResult':
+    case "labResult":
       return (
         <div className="space-y-4">
           {data.map((result, index) => (
-            <div key={index} className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+            <div
+              key={index}
+              className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden"
+            >
               <div className="bg-gray-50 dark:bg-gray-800 px-4 py-2 border-b border-gray-200 dark:border-gray-700">
                 <h4 className="font-semibold text-gray-900 dark:text-gray-100">
                   {result.title || result.name || `Result ${index + 1}`}
@@ -71,16 +85,21 @@ const SidebarContentRenderer: React.FC<SidebarContentRendererProps> = ({ type, d
               </div>
               <div className="p-4">
                 <div className="space-y-2">
-                  {Object.entries(result.values || result.data || {}).map(([key, value]) => (
-                    <div key={key} className="flex justify-between items-center py-1">
-                      <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                        {key}:
-                      </span>
-                      <span className="text-sm text-gray-900 dark:text-gray-100">
-                        {String(value)}
-                      </span>
-                    </div>
-                  ))}
+                  {Object.entries(result.values || result.data || {}).map(
+                    ([key, value]) => (
+                      <div
+                        key={key}
+                        className="flex justify-between items-center py-1"
+                      >
+                        <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                          {key}:
+                        </span>
+                        <span className="text-sm text-gray-900 dark:text-gray-100">
+                          {String(value)}
+                        </span>
+                      </div>
+                    )
+                  )}
                 </div>
                 {result.note && (
                   <div className="mt-3 p-2 bg-blue-50 dark:bg-blue-900/20 rounded text-sm text-blue-800 dark:text-blue-200">
@@ -93,7 +112,7 @@ const SidebarContentRenderer: React.FC<SidebarContentRendererProps> = ({ type, d
         </div>
       );
 
-    case 'image':
+    case "image":
       return (
         <div className="grid grid-cols-1 gap-4">
           {data.map((image, index) => (
@@ -113,7 +132,7 @@ const SidebarContentRenderer: React.FC<SidebarContentRendererProps> = ({ type, d
         </div>
       );
 
-    case 'linkList':
+    case "linkList":
       return (
         <div className="space-y-3">
           {data.map((link, index) => (
@@ -128,8 +147,18 @@ const SidebarContentRenderer: React.FC<SidebarContentRendererProps> = ({ type, d
                 {link.icon ? (
                   <img src={link.icon} alt="" className="w-5 h-5" />
                 ) : (
-                  <svg className="w-5 h-5 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  <svg
+                    className="w-5 h-5 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                    />
                   </svg>
                 )}
               </div>
@@ -143,8 +172,18 @@ const SidebarContentRenderer: React.FC<SidebarContentRendererProps> = ({ type, d
                   </div>
                 )}
               </div>
-              <svg className="w-4 h-4 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              <svg
+                className="w-4 h-4 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
               </svg>
             </a>
           ))}
@@ -159,5 +198,3 @@ const SidebarContentRenderer: React.FC<SidebarContentRendererProps> = ({ type, d
       );
   }
 };
-
-export default SidebarContentRenderer;

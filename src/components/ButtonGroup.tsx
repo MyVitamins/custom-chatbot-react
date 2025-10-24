@@ -1,11 +1,14 @@
-import React from 'react';
+import React from "react";
 
 interface ButtonGroupProps {
   options: string[];
   onButtonClick: (value: string) => void;
 }
 
-const ButtonGroup: React.FC<ButtonGroupProps> = ({ options, onButtonClick }) => {
+export const ButtonGroup: React.FC<ButtonGroupProps> = ({
+  options,
+  onButtonClick,
+}) => {
   return (
     <div className="flex flex-wrap gap-2">
       {options.map((option, index) => (
@@ -20,5 +23,3 @@ const ButtonGroup: React.FC<ButtonGroupProps> = ({ options, onButtonClick }) => 
     </div>
   );
 };
-
-export default ButtonGroup;

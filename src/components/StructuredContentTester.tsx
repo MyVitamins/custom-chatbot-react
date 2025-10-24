@@ -1,17 +1,43 @@
-import React from 'react';
+import React from "react";
 
 interface StructuredContentTesterProps {
   onTestContent: (contentType: string) => void;
 }
 
-const StructuredContentTester: React.FC<StructuredContentTesterProps> = ({ onTestContent }) => {
+export const StructuredContentTester: React.FC<
+  StructuredContentTesterProps
+> = ({ onTestContent }) => {
   const contentTypes = [
-    { type: 'guide', label: '📘 Sleep Guide', description: 'Step-by-step sleep hygiene guide' },
-    { type: 'faq', label: '❓ FAQ', description: 'Frequently asked questions about supplements' },
-    { type: 'labResult', label: '🧪 Lab Results', description: 'Sample lab results with ranges' },
-    { type: 'image', label: '🖼️ Images', description: 'Sleep cycle diagrams and charts' },
-    { type: 'linkList', label: '🔗 Resources', description: 'Helpful sleep health links' },
-    { type: 'product', label: '💊 Products', description: 'Sleep supplement recommendations' }
+    {
+      type: "guide",
+      label: "📘 Sleep Guide",
+      description: "Step-by-step sleep hygiene guide",
+    },
+    {
+      type: "faq",
+      label: "❓ FAQ",
+      description: "Frequently asked questions about supplements",
+    },
+    {
+      type: "labResult",
+      label: "🧪 Lab Results",
+      description: "Sample lab results with ranges",
+    },
+    {
+      type: "image",
+      label: "🖼️ Images",
+      description: "Sleep cycle diagrams and charts",
+    },
+    {
+      type: "linkList",
+      label: "🔗 Resources",
+      description: "Helpful sleep health links",
+    },
+    {
+      type: "product",
+      label: "💊 Products",
+      description: "Sleep supplement recommendations",
+    },
   ];
 
   return (
@@ -20,7 +46,8 @@ const StructuredContentTester: React.FC<StructuredContentTesterProps> = ({ onTes
         Test Different Structured Content Types
       </h3>
       <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-        Click any button below to test how different content types render in the sidebar:
+        Click any button below to test how different content types render in the
+        sidebar:
       </p>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
         {contentTypes.map(({ type, label, description }) => (
@@ -41,5 +68,3 @@ const StructuredContentTester: React.FC<StructuredContentTesterProps> = ({ onTes
     </div>
   );
 };
-
-export default StructuredContentTester;

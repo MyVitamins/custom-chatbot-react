@@ -22,7 +22,11 @@
     "noUnusedParameters": false,
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+
+    "declaration": true,
+    "declarationDir": "dist",
+    "emitDeclarationOnly": true
   },
-  "include": ["src"]
+  "include": ["src", "index.ts"]
 }

@@ -1,7 +1,7 @@
-import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import SidebarContentRenderer from './SidebarContentRenderer';
-import { type Message } from '../types';
+import React from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { SidebarContentRenderer } from "./SidebarContentRenderer";
+import { type Message } from "../types";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -10,31 +10,37 @@ interface SidebarProps {
   messages: Message[];
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, messageId, messages }) => {
+export const Sidebar: React.FC<SidebarProps> = ({
+  isOpen,
+  onClose,
+  messageId,
+  messages,
+}) => {
   // Find the message with the given ID and extract structured content
-  const message = messageId ? messages.find(msg => msg.id === messageId) : null;
+  const message = messageId
+    ? messages.find((msg) => msg.id === messageId)
+    : null;
   const structuredContent = message?.structured;
-  
-  
+
   // Generate title based on structured content type
   const getTitle = () => {
-    if (!structuredContent) return 'Details';
-    
+    if (!structuredContent) return "Details";
+
     switch (structuredContent.type) {
-      case 'product':
-        return 'Recommended Supplements';
-      case 'guide':
-        return 'Guide';
-      case 'faq':
-        return 'Frequently Asked Questions';
-      case 'labResult':
-        return 'Lab Results';
-      case 'image':
-        return 'Images';
-      case 'linkList':
-        return 'Resources';
+      case "product":
+        return "Recommended Supplements";
+      case "guide":
+        return "Guide";
+      case "faq":
+        return "Frequently Asked Questions";
+      case "labResult":
+        return "Lab Results";
+      case "image":
+        return "Images";
+      case "linkList":
+        return "Resources";
       default:
-        return 'Details';
+        return "Details";
     }
   };
 
@@ -51,14 +57,14 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, messageId, messages 
             exit={{ opacity: 0 }}
             onClick={onClose}
           />
-          
+
           {/* Sidebar */}
           <motion.aside
             className="sidebar-container fixed top-0 right-0 w-full md:w-[400px] bg-white dark:bg-neutral-900 border-l border-gray-200 dark:border-neutral-800 shadow-xl z-50 md:shadow-2xl"
-            initial={{ x: '100%' }}
+            initial={{ x: "100%" }}
             animate={{ x: 0 }}
-            exit={{ x: '100%' }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            exit={{ x: "100%" }}
+            transition={{ type: "spring", damping: 25, stiffness: 200 }}
           >
             {/* Fixed Header */}
             <div className="flex-shrink-0 bg-white dark:bg-neutral-900 border-b border-gray-100 dark:border-neutral-800 px-4 py-3 flex items-center justify-between">
@@ -89,9 +95,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, messageId, messages 
 
             {/* Scrollable Content Area */}
             <div className="sidebar-content sidebar-scroll px-4 py-3 space-y-4 scroll-smooth">
-              <SidebarContentRenderer 
-                type={structuredContent.type} 
-                data={structuredContent.data} 
+              <SidebarContentRenderer
+                type={structuredContent.type}
+                data={structuredContent.data}
               />
             </div>
           </motion.aside>
@@ -100,5 +106,3 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, messageId, messages 
     </AnimatePresence>
   );
 };
-
-export default Sidebar;

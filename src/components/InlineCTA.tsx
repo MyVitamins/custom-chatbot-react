@@ -1,68 +1,73 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React from "react";
+import { motion } from "framer-motion";
 
 interface InlineCTAProps {
   count: number;
-  contentType: 'product' | 'guide' | 'faq' | 'labResult' | 'image' | 'linkList';
+  contentType: "product" | "guide" | "faq" | "labResult" | "image" | "linkList";
   messageId: string;
   onViewRecommendations: (messageId: string) => void;
 }
 
-const InlineCTA: React.FC<InlineCTAProps> = ({ count, contentType, messageId, onViewRecommendations }) => {
+export const InlineCTA: React.FC<InlineCTAProps> = ({
+  count,
+  contentType,
+  messageId,
+  onViewRecommendations,
+}) => {
   const getTypeLabel = () => {
     switch (contentType) {
-      case 'product':
-        return 'supplements';
-      case 'guide':
-        return 'guide steps';
-      case 'faq':
-        return 'questions';
-      case 'labResult':
-        return 'lab results';
-      case 'image':
-        return 'images';
-      case 'linkList':
-        return 'resources';
+      case "product":
+        return "supplements";
+      case "guide":
+        return "guide steps";
+      case "faq":
+        return "questions";
+      case "labResult":
+        return "lab results";
+      case "image":
+        return "images";
+      case "linkList":
+        return "resources";
       default:
-        return 'items';
+        return "items";
     }
   };
 
   const getActionLabel = () => {
     switch (contentType) {
-      case 'product':
-        return 'View Recommendations';
-      case 'guide':
-        return 'View Guide';
-      case 'faq':
-        return 'View FAQ';
-      case 'labResult':
-        return 'View Lab Results';
-      case 'image':
-        return 'View Images';
-      case 'linkList':
-        return 'View Resources';
+      case "product":
+        return "View Recommendations";
+      case "guide":
+        return "View Guide";
+      case "faq":
+        return "View FAQ";
+      case "labResult":
+        return "View Lab Results";
+      case "image":
+        return "View Images";
+      case "linkList":
+        return "View Resources";
       default:
-        return 'View Details';
+        return "View Details";
     }
   };
 
   const getIcon = () => {
     switch (contentType) {
-      case 'product':
-        return '💊';
-      case 'guide':
-        return '📖';
-      case 'faq':
-        return '❓';
-      case 'labResult':
-        return '🧪';
-      case 'image':
-        return '🖼️';
-      case 'linkList':
-        return '🔗';
+      case "product":
+        return "💊";
+      case "guide":
+        return "📖";
+      case "faq":
+        return "❓";
+      case "labResult":
+        return "🧪";
+      case "image":
+        return "🖼️";
+      case "linkList":
+        return "🔗";
       default:
-        return '💡';
+        return "💡";
     }
   };
 
@@ -77,7 +82,7 @@ const InlineCTA: React.FC<InlineCTAProps> = ({ count, contentType, messageId, on
         <div className="flex items-center space-x-2">
           <span className="text-lg">{getIcon()}</span>
           <span className="text-sm font-medium text-blue-800 dark:text-blue-200">
-            I found {count} {getTypeLabel()} — 
+            I found {count} {getTypeLabel()} —
           </span>
         </div>
         <motion.button
@@ -92,5 +97,3 @@ const InlineCTA: React.FC<InlineCTAProps> = ({ count, contentType, messageId, on
     </motion.div>
   );
 };
-
-export default InlineCTA;

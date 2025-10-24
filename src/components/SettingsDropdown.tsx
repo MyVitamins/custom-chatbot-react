@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from "react";
 
 interface SettingsDropdownProps {
   debugMode: boolean;
@@ -8,12 +8,12 @@ interface SettingsDropdownProps {
   onContentTesterToggle: (show: boolean) => void;
 }
 
-const SettingsDropdown: React.FC<SettingsDropdownProps> = ({
+export const SettingsDropdown: React.FC<SettingsDropdownProps> = ({
   debugMode,
   onDebugModeChange,
   onNewChat,
   showContentTester,
-  onContentTesterToggle
+  onContentTesterToggle,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -21,14 +21,17 @@ const SettingsDropdown: React.FC<SettingsDropdownProps> = ({
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
@@ -66,9 +69,11 @@ const SettingsDropdown: React.FC<SettingsDropdownProps> = ({
       {isOpen && (
         <div className="absolute right-0 mt-2 w-64 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-2 z-50 transition-colors duration-300 ease-in-out">
           <div className="px-4 py-2 border-b border-gray-100 dark:border-gray-700">
-            <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-100 transition-colors duration-300 ease-in-out">Settings</h3>
+            <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-100 transition-colors duration-300 ease-in-out">
+              Settings
+            </h3>
           </div>
-          
+
           {/* Debug Mode Toggle */}
           <div className="px-4 py-3">
             <label className="flex items-center space-x-3 cursor-pointer">
@@ -79,8 +84,12 @@ const SettingsDropdown: React.FC<SettingsDropdownProps> = ({
                 className="w-4 h-4 text-blue-600 bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500 focus:ring-2 transition-colors duration-300 ease-in-out"
               />
               <div className="flex-1">
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300 ease-in-out">Debug Mode</span>
-                <p className="text-xs text-gray-500 dark:text-gray-400 transition-colors duration-300 ease-in-out">Show raw BotDojo responses in console</p>
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300 ease-in-out">
+                  Debug Mode
+                </span>
+                <p className="text-xs text-gray-500 dark:text-gray-400 transition-colors duration-300 ease-in-out">
+                  Show raw BotDojo responses in console
+                </p>
               </div>
             </label>
           </div>
@@ -95,8 +104,12 @@ const SettingsDropdown: React.FC<SettingsDropdownProps> = ({
                 className="w-4 h-4 text-blue-600 bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500 focus:ring-2 transition-colors duration-300 ease-in-out"
               />
               <div className="flex-1">
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300 ease-in-out">Content Tester</span>
-                <p className="text-xs text-gray-500 dark:text-gray-400 transition-colors duration-300 ease-in-out">Show structured content type testing panel</p>
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300 ease-in-out">
+                  Content Tester
+                </span>
+                <p className="text-xs text-gray-500 dark:text-gray-400 transition-colors duration-300 ease-in-out">
+                  Show structured content type testing panel
+                </p>
               </div>
             </label>
           </div>
@@ -135,5 +148,3 @@ const SettingsDropdown: React.FC<SettingsDropdownProps> = ({
     </div>
   );
 };
-
-export default SettingsDropdown;
