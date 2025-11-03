@@ -13,12 +13,14 @@ interface ChatbotContentProps {
   isThemeRequired?: boolean;
   baseFontSize?: number;
   sidebarZIndex?: number;
+  maxHeight?: number;
 }
 
 export const ChatbotContent: React.FC<ChatbotContentProps> = ({ 
   isThemeRequired = false,
   baseFontSize = 16,
-  sidebarZIndex = 50
+  sidebarZIndex = 50,
+  maxHeight
 }) => {
   // Ensure light theme is default when theme toggle is not required
   useEffect(() => {
@@ -50,6 +52,7 @@ export const ChatbotContent: React.FC<ChatbotContentProps> = ({
       className="chatbot-container flex flex-col h-screen bg-[#FDFDFC] dark:bg-[#0D1117] font-sans transition-colors duration-300 ease-in-out"
       style={{
         '--chatbot-font-base': `${baseFontSize}px`,
+        ...(maxHeight && { maxHeight: `${maxHeight}px` })
       } as React.CSSProperties}
     >
       {/* Header - floating style */}

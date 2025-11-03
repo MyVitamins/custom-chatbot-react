@@ -35,7 +35,7 @@ export const InputBar: React.FC<InputBarProps> = ({
       <div className="max-w-4xl mx-auto">
         <form
           onSubmit={handleSubmit}
-          className="flex gap-3 p-4 bg-white dark:bg-gray-800 rounded-full shadow-soft-md dark:shadow-dark-md hover:shadow-soft-lg dark:hover:shadow-dark-lg focus-within:shadow-soft-lg dark:focus-within:shadow-dark-lg transition-shadow duration-200 ease-in-out"
+          className="flex gap-3 p-2 bg-white dark:bg-gray-800 rounded-full shadow-soft-md dark:shadow-dark-md hover:shadow-soft-lg dark:hover:shadow-dark-lg focus-within:shadow-soft-lg dark:focus-within:shadow-dark-lg transition-shadow duration-200 ease-in-out"
           role="form"
           aria-label="Chat message input"
         >
