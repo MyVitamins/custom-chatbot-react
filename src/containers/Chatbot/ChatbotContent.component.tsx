@@ -11,9 +11,13 @@ import Logo from "../../assets/logo.png";
 
 interface ChatbotContentProps {
   isThemeRequired?: boolean;
+  baseFontSize?: number;
 }
 
-export const ChatbotContent: React.FC<ChatbotContentProps> = ({ isThemeRequired = false }) => {
+export const ChatbotContent: React.FC<ChatbotContentProps> = ({ 
+  isThemeRequired = false,
+  baseFontSize = 16 
+}) => {
   // Ensure light theme is default when theme toggle is not required
   useEffect(() => {
     if (!isThemeRequired) {
@@ -40,7 +44,12 @@ export const ChatbotContent: React.FC<ChatbotContentProps> = ({ isThemeRequired 
   } = useChat();
 
   return (
-    <div className="flex flex-col h-screen bg-[#FDFDFC] dark:bg-[#0D1117] font-sans transition-colors duration-300 ease-in-out">
+    <div 
+      className="chatbot-container flex flex-col h-screen bg-[#FDFDFC] dark:bg-[#0D1117] font-sans transition-colors duration-300 ease-in-out"
+      style={{
+        '--chatbot-font-base': `${baseFontSize}px`,
+      } as React.CSSProperties}
+    >
       {/* Header - floating style */}
       <div className="px-6 py-4 transition-colors duration-300 ease-in-out">
         <div className="flex justify-between items-center max-w-4xl mx-auto">
