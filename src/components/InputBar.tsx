@@ -32,7 +32,7 @@ export const InputBar: React.FC<InputBarProps> = ({
 
   return (
     <div className="px-6 py-4 transition-colors duration-300 ease-in-out">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-2xl mx-auto">
         <form
           onSubmit={handleSubmit}
           className="flex gap-3 p-2 bg-white dark:bg-gray-800 rounded-full shadow-soft-md dark:shadow-dark-md hover:shadow-soft-lg dark:hover:shadow-dark-lg focus-within:shadow-soft-lg dark:focus-within:shadow-dark-lg transition-shadow duration-200 ease-in-out"

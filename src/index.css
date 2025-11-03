@@ -21,6 +21,11 @@
 .chatbot-container .text-3xl { font-size: calc(var(--chatbot-font-base, 16px) * 1.875) !important; }
 .chatbot-container .text-4xl { font-size: calc(var(--chatbot-font-base, 16px) * 2.25) !important; }
 
+/* Ensure buttons and interactive elements inherit and scale font-size */
+.chatbot-container button {
+  font-size: inherit;
+}
+
 /* Scale all padding utilities - Convert rem multipliers to pixels using baseFontSize */
 /* Formula: baseFontSize * remMultiplier (e.g., 18px * 0.25 = 4.5px for p-1) */
 .chatbot-container .p-1 { padding: calc(var(--chatbot-font-base, 16px) * 0.25) !important; }
@@ -31,7 +36,9 @@
 .chatbot-container .px-2 { padding-left: calc(var(--chatbot-font-base, 16px) * 0.5) !important; padding-right: calc(var(--chatbot-font-base, 16px) * 0.5) !important; }
 .chatbot-container .px-3 { padding-left: calc(var(--chatbot-font-base, 16px) * 0.75) !important; padding-right: calc(var(--chatbot-font-base, 16px) * 0.75) !important; }
 .chatbot-container .px-4 { padding-left: calc(var(--chatbot-font-base, 16px) * 1) !important; padding-right: calc(var(--chatbot-font-base, 16px) * 1) !important; }
+.chatbot-container .px-5 { padding-left: calc(var(--chatbot-font-base, 16px) * 1.25) !important; padding-right: calc(var(--chatbot-font-base, 16px) * 1.25) !important; }
 .chatbot-container .px-6 { padding-left: calc(var(--chatbot-font-base, 16px) * 1.5) !important; padding-right: calc(var(--chatbot-font-base, 16px) * 1.5) !important; }
+.chatbot-container .py-1 { padding-top: calc(var(--chatbot-font-base, 16px) * 0.25) !important; padding-bottom: calc(var(--chatbot-font-base, 16px) * 0.25) !important; }
 .chatbot-container .py-2 { padding-top: calc(var(--chatbot-font-base, 16px) * 0.5) !important; padding-bottom: calc(var(--chatbot-font-base, 16px) * 0.5) !important; }
 .chatbot-container .py-3 { padding-top: calc(var(--chatbot-font-base, 16px) * 0.75) !important; padding-bottom: calc(var(--chatbot-font-base, 16px) * 0.75) !important; }
 .chatbot-container .py-4 { padding-top: calc(var(--chatbot-font-base, 16px) * 1) !important; padding-bottom: calc(var(--chatbot-font-base, 16px) * 1) !important; }

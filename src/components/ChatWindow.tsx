@@ -35,7 +35,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
       aria-live="polite"
       aria-atomic="false"
     >
-      <div className="max-w-4xl mx-auto px-6 py-6">
+      <div className="mx-auto px-6 py-6">
         {messages.length === 0 ? (
           <div className="space-y-6">
             {/* Introduction Message */}

@@ -31,7 +31,7 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({
     // User messages: right-aligned bubbles
     return (
       <div className="flex justify-end mb-6">
-        <div className="max-w-xs lg:max-w-md">
+        <div className="max-w-full">
           {message.type === "text" && (
             <MessageBubble role={message.role} text={message.content.text} />
           )}
@@ -45,10 +45,10 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({
     return <TypingIndicator />;
   }
 
-  // Bot messages: professional content blocks with centered max-width
+  // Bot messages: professional content blocks
   return (
     <div className="mb-6">
-      <div className="max-w-2xl mx-auto">
+      <div className="mx-auto">
         {message.type === "text" && (
           <div className="px-4 py-3">
             <div className="text-base leading-relaxed text-gray-800 dark:text-gray-100 whitespace-pre-wrap transition-colors duration-300 ease-in-out">
