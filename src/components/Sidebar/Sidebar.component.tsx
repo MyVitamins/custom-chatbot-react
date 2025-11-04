@@ -1,7 +1,7 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { SidebarContentRenderer } from "./SidebarContentRenderer";
-import { type Message } from "../types";
+import { SidebarContentRenderer } from "../";
+import { type Message } from "../../types";
 
 interface SidebarProps {
   isOpen: boolean;

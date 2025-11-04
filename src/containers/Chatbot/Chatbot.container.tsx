@@ -1,6 +1,6 @@
 import type { FC } from "react";
-import { ChatProvider } from "../../contexts/ChatContext";
-import { ChatbotContent } from "./ChatbotContent.component";
+import { ChatProvider } from "../../contexts";
+import { ChatbotContent } from "./ChatbotContent";
 
 export interface ChatbotProps {
   isThemeRequired?: boolean;

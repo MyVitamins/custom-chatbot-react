@@ -1,13 +1,7 @@
 import React, { useEffect } from "react";
-import { ChatWindow } from "../../components/ChatWindow";
-import { InputBar } from "../../components/InputBar";
-import { SettingsDropdown } from "../../components/SettingsDropdown";
-import { Sidebar } from "../../components/Sidebar";
-import { StructuredContentTester } from "../../components/StructuredContentTester";
-import { SuggestedQuestionsAction } from "../../components/SuggestedQuestionsAction";
-import { ThemeToggle } from "../../components/ThemeToggle";
-import { useChat } from "../../contexts/ChatContext";
-import Logo from "../../assets/logo.png";
+import { ChatWindow, InputBar, SettingsDropdown, Sidebar, StructuredContentTester, SuggestedQuestionsAction, ThemeToggle } from "../../../components";
+import { useChat } from "../../../contexts";
+import Logo from "../../../assets/logo.png";
 
 interface ChatbotContentProps {
   isThemeRequired?: boolean;

@@ -1,10 +1,6 @@
 import React from "react";
-import { MessageBubble } from "./MessageBubble";
-import { ButtonGroup } from "./ButtonGroup";
-import { TypingIndicator } from "./TypingIndicator";
-import { SuggestedQuestions } from "./SuggestedQuestions";
-import { InlineCTA } from "./InlineCTA";
-import { type Message } from "../types";
+import { MessageBubble, ButtonGroup, TypingIndicator, SuggestedQuestions, InlineCTA } from "../";
+import { type Message } from "../../types";
 
 interface MessageRendererProps {
   message: Message;
