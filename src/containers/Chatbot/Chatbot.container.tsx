@@ -1,5 +1,5 @@
 import type { FC } from "react";
-import { ChatProvider } from "../../contexts";
+import { ChatProvider } from "@contexts";
 import { ChatbotContent } from "./ChatbotContent";
 
 export interface ChatbotProps {

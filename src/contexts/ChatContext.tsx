@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useReducer, type ReactNode } from "react";
-import type { Message, SidebarState } from "../types";
+import type { Message, SidebarState } from "@types";
 
 // State interfaces
 interface ChatState {

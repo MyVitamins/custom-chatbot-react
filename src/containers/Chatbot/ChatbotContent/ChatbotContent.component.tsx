@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
-import { ChatWindow, InputBar, SettingsDropdown, Sidebar, StructuredContentTester, SuggestedQuestionsAction, ThemeToggle } from "../../../components";
-import { useChat } from "../../../contexts";
-import Logo from "../../../assets/logo.png";
+import { ChatWindow, InputBar, SettingsDropdown, Sidebar, StructuredContentTester, SuggestedQuestionsAction, ThemeToggle } from "@components";
+import { useChat } from "@contexts";
+import Logo from "@assets/logo.png";
 
 interface ChatbotContentProps {
   isThemeRequired?: boolean;

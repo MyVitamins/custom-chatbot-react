@@ -1,5 +1,5 @@
 import React from "react";
-import { ProductCard } from "../";
+import { ProductCard } from "@components";
 
 interface SidebarContentRendererProps {
   type: "product" | "guide" | "faq" | "labResult" | "image" | "linkList";
