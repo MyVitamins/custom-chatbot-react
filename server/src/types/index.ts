@@ -91,15 +91,36 @@ export interface BotDojoOutput {
 
 export interface ChatRequest {
   message: string;
+  initData: string | {
+    BOTDOJO_API_KEY: string;
+    BOTDOJO_BASE_URL: string;
+    BOTDOJO_ACCOUNT_ID: string;
+    BOTDOJO_PROJECT_ID: string;
+    BOTDOJO_FLOW_ID: string;
+  };
 }
 
 export interface SuggestionsRequest {
   context?: string;
   currentSetIndex?: number;
+  initData: string | {
+    BOTDOJO_API_KEY: string;
+    BOTDOJO_BASE_URL: string;
+    BOTDOJO_ACCOUNT_ID: string;
+    BOTDOJO_PROJECT_ID: string;
+    BOTDOJO_FLOW_ID: string;
+  };
 }
 
 export interface TestStructuredRequest {
   contentType: 'guide' | 'faq' | 'labResult' | 'image' | 'linkList' | 'product';
+  initData: string | {
+    BOTDOJO_API_KEY: string;
+    BOTDOJO_BASE_URL: string;
+    BOTDOJO_ACCOUNT_ID: string;
+    BOTDOJO_PROJECT_ID: string;
+    BOTDOJO_FLOW_ID: string;
+  };
 }
 
 export interface ChatResponse {

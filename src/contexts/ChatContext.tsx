@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useReducer, type ReactNode } from "react";
 import type { Message, SidebarState } from "@types";
+import type { InitData } from "@containers/Chatbot";
+import { encryptInitData } from "../utils/encryption";
 
 // State interfaces
 interface ChatState {
@@ -103,6 +105,7 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
 interface ChatContextType {
   state: ChatState;
   dispatch: React.Dispatch<ChatAction>;
+  initData: InitData;
   // Helper functions
   generateId: () => string;
   sendMessage: (content: string) => Promise<void>;
@@ -123,9 +126,10 @@ const ChatContext = createContext<ChatContextType | undefined>(undefined);
 // Provider component
 interface ChatProviderProps {
   children: ReactNode;
+  initData: InitData;
 }
 
-export function ChatProvider({ children }: ChatProviderProps) {
+export function ChatProvider({ children, initData }: ChatProviderProps) {
   const [state, dispatch] = useReducer(chatReducer, initialState);
 
   // Helper function to generate unique IDs
@@ -174,11 +178,21 @@ export function ChatProvider({ children }: ChatProviderProps) {
     dispatch({ type: "SET_ABORT_CONTROLLER", payload: controller });
 
     try {
-      // Send message to backend server
+      // Encrypt initData before sending
+      // Will automatically fall back to plain text if encryption is not available
+      const encryptedInitData = await encryptInitData(initData);
+
+      // Send message to backend server with encrypted BotDojo config in body
       const response = await fetch("/chat", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: content }),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${initData.BOTDOJO_API_KEY}`
+        },
+        body: JSON.stringify({
+          message: content,
+          initData: encryptedInitData
+        }),
         signal: controller.signal,
       });
 
@@ -288,12 +302,20 @@ export function ChatProvider({ children }: ChatProviderProps) {
   const handleTestStructuredContent = async (contentType: string) => {
     try {
       dispatch({ type: "SET_LOADING", payload: true });
+
+      // Encrypt initData before sending
+      const encryptedInitData = await encryptInitData(initData);
+
       const response = await fetch("/test-structured", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${initData.BOTDOJO_API_KEY}`
         },
-        body: JSON.stringify({ contentType }),
+        body: JSON.stringify({
+          contentType,
+          initData: encryptedInitData
+        }),
       });
 
       if (!response.ok) {
@@ -335,14 +357,19 @@ export function ChatProvider({ children }: ChatProviderProps) {
 
     dispatch({ type: "SET_LOADING_SUGGESTIONS", payload: true });
     try {
+      // Encrypt initData before sending
+      const encryptedInitData = await encryptInitData(initData);
+
       // Send a request to get fresh suggestions
       const response = await fetch("/chat", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${initData.BOTDOJO_API_KEY}`
         },
         body: JSON.stringify({
           message: "Please provide some suggested follow-up questions",
+          initData: encryptedInitData
         }),
       });
 
@@ -435,6 +462,7 @@ export function ChatProvider({ children }: ChatProviderProps) {
   const contextValue: ChatContextType = {
     state,
     dispatch,
+    initData,
     generateId,
     sendMessage,
     handleButtonClick,

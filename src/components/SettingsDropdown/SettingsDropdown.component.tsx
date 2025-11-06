@@ -3,7 +3,6 @@ import React, { useState, useRef, useEffect } from "react";
 interface SettingsDropdownProps {
   debugMode: boolean;
   onDebugModeChange: (enabled: boolean) => void;
-  onNewChat: () => void;
   showContentTester: boolean;
   onContentTesterToggle: (show: boolean) => void;
 }
@@ -11,7 +10,6 @@ interface SettingsDropdownProps {
 export const SettingsDropdown: React.FC<SettingsDropdownProps> = ({
   debugMode,
   onDebugModeChange,
-  onNewChat,
   showContentTester,
   onContentTesterToggle,
 }) => {
@@ -114,35 +112,6 @@ export const SettingsDropdown: React.FC<SettingsDropdownProps> = ({
             </label>
           </div>
 
-          {/* Divider */}
-          <div className="border-t border-gray-100 dark:border-gray-700"></div>
-
-          {/* New Chat Button */}
-          <div className="px-4 py-3">
-            <button
-              onClick={() => {
-                onNewChat();
-                setIsOpen(false);
-              }}
-              className="w-full flex items-center space-x-3 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors duration-300 ease-in-out"
-            >
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                />
-              </svg>
-              <span>New Chat</span>
-            </button>
-          </div>
         </div>
       )}
     </div>

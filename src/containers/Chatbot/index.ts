@@ -1,1 +1,1 @@
-export { Chatbot, type ChatbotProps } from "./Chatbot.container";
+export { Chatbot, type ChatbotProps, type InitData } from "./Chatbot.container";

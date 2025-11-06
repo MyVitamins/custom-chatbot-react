@@ -46,16 +46,22 @@ export default class BotDojoService {
       }
     };
 
-    console.log('Calling BotDojo API:', endpoint);
-    console.log('Request body:', JSON.stringify(requestBody, null, 2));
+    // Trim API key to remove any whitespace
+    const trimmedApiKey = this.apiKey?.trim() || this.apiKey;
+
+    // BotDojo API authentication - according to docs, use Authorization header without Bearer prefix
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json'
+    };
+
+    // BotDojo requires API key in Authorization header (no Bearer prefix)
+    if (trimmedApiKey) {
+      headers['Authorization'] = trimmedApiKey;
+    }
 
     const response = await fetch(endpoint, {
       method: 'POST',
-      headers: {
-        'Authorization': this.apiKey,
-        'X-API-Key': this.apiKey,
-        'Content-Type': 'application/json'
-      },
+      headers,
       body: JSON.stringify(requestBody)
     });
 
@@ -125,7 +131,6 @@ export default class BotDojoService {
       
       // Process products into structured content
       if (parsedContent.products && Array.isArray(parsedContent.products)) {
-        console.log('Processing products from JSON:', parsedContent.products.length);
         parsedContent.products.forEach(product => {
           const normalized = normalizeImageUrl(product.imageUrl || product.image || '');
           const safeImageUrl = isLikelyImage(normalized) ? normalized : undefined;
@@ -159,7 +164,7 @@ export default class BotDojoService {
           });
         }
       } catch (e) {
-        console.log('Error parsing product card arguments:', e);
+        // Silently skip invalid product card arguments
       }
     });
     
@@ -240,9 +245,6 @@ export default class BotDojoService {
 
     try {
       const parsedContent = JSON.parse(textContent);
-      console.log('=== RESPONSE.TEXT_OUTPUT JSON PARSING ===');
-      console.log('Original textContent:', textContent);
-      console.log('Parsed content:', parsedContent);
       
       if (parsedContent.text && typeof parsedContent.text === 'string') {
         textContent = parsedContent.text;
@@ -256,7 +258,7 @@ export default class BotDojoService {
         }
       }
     } catch (e) {
-      console.log('Response.text_output JSON parsing failed:', e);
+      // Not JSON, use text as-is
     }
 
     return { text: textContent, suggestedQuestions, products };
@@ -320,7 +322,7 @@ export default class BotDojoService {
         }
       }
     } catch (e) {
-      console.log('Fallback JSON parsing failed:', e);
+      // Not JSON, use text as-is
     }
     
     // Clean up canvas references from text content
@@ -353,8 +355,6 @@ export default class BotDojoService {
    */
   private normalizeStepsArrayResponse(botdojoResponse: BotDojoResponse): ChatMessage[] {
     const messages: ChatMessage[] = [];
-    console.log('=== STEPS ARRAY FOUND ===');
-    console.log('Number of steps:', botdojoResponse.steps!.length);
     
     const outputStep = botdojoResponse.steps!.find(step => 
       step.stepLabel === 'Output' && step.content
@@ -373,7 +373,7 @@ export default class BotDojoService {
           }
         }
       } catch (e) {
-        console.log('JSON parsing failed:', e);
+        // Not JSON, use text as-is
       }
       
       if (suggestedQuestions.length === 0) {

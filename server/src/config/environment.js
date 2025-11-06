@@ -1,29 +1,8 @@
 const dotenv = require("dotenv");
+const path = require("path");
 
-// Load environment variables
-dotenv.config();
-
-// Environment validation
-const requiredEnvVars = [
-  "BOTDOJO_API_KEY",
-  "BOTDOJO_BASE_URL",
-  "BOTDOJO_ACCOUNT_ID",
-  "BOTDOJO_PROJECT_ID",
-  "BOTDOJO_FLOW_ID",
-];
-
-const validateEnvironment = () => {
-  const missing = requiredEnvVars.filter((key) => !process.env[key]);
-
-  if (missing.length > 0) {
-    console.error("❌ Missing required environment variables:");
-    missing.forEach((key) => console.error(`   - ${key}`));
-    console.error("\nPlease set all required BotDojo environment variables");
-    process.exit(1);
-  }
-
-  console.log("✅ BotDojo API credentials loaded successfully");
-};
+// Load environment variables from root directory .env file
+dotenv.config({ path: path.resolve(__dirname, "../../../.env") });
 
 // BotDojo configuration
 const botdojoConfig = {
@@ -45,13 +24,13 @@ const serverConfig = {
         "http://localhost:5173",
         "http://127.0.0.1:5173",
         "http://gethealthy.local:9190",
+        "http://localhost:5005",
         "http://app.gethealthyscript.local:5005",
         "http://chatbot-demo-alb-895393060.us-east-1.elb.amazonaws.com",
       ],
 };
 
 module.exports = {
-  validateEnvironment,
   botdojoConfig,
   serverConfig,
 };

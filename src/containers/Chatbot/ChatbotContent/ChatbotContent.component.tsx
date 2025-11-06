@@ -27,6 +27,7 @@ export const ChatbotContent: React.FC<ChatbotContentProps> = ({
   // Hooks
   const {
     state,
+    initData,
     sendMessage,
     handleButtonClick,
     cancelRequest,
@@ -64,12 +65,33 @@ export const ChatbotContent: React.FC<ChatbotContentProps> = ({
           </div>
           <div className="flex items-center gap-2">
             {isThemeRequired && <ThemeToggle />}
+            {/* New Chat Button */}
+            <button
+              onClick={handleNewChat}
+              className="p-2 text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 flex items-center gap-2"
+              aria-label="New Chat"
+            >
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                />
+              </svg>
+              <span className="text-sm font-medium">New Chat</span>
+            </button>
             <SettingsDropdown
               debugMode={state.debugMode}
               onDebugModeChange={(debugMode) =>
                 dispatch({ type: "SET_DEBUG_MODE", payload: debugMode })
               }
-              onNewChat={handleNewChat}
               showContentTester={state.showContentTester}
               onContentTesterToggle={(show) =>
                 dispatch({ type: "SET_SHOW_CONTENT_TESTER", payload: show })
@@ -106,6 +128,7 @@ export const ChatbotContent: React.FC<ChatbotContentProps> = ({
               questions={getSuggestedQuestions()}
               isLoading={state.isLoadingSuggestions}
               context={getSuggestionsContext()}
+              initData={initData}
             />
           </div>
         </div>

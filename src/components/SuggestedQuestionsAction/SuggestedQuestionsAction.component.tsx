@@ -1,5 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { encryptInitData } from "../../utils/encryption";
+
+interface InitData {
+  BOTDOJO_API_KEY: string;
+  BOTDOJO_BASE_URL: string;
+  BOTDOJO_ACCOUNT_ID: string;
+  BOTDOJO_PROJECT_ID: string;
+  BOTDOJO_FLOW_ID: string;
+}
 
 interface SuggestedQuestionsActionProps {
   onQuestionClick: (question: string) => void;
@@ -7,11 +16,12 @@ interface SuggestedQuestionsActionProps {
   questions?: string[];
   isLoading?: boolean;
   context?: string;
+  initData: InitData;
 }
 
 export const SuggestedQuestionsAction: React.FC<
   SuggestedQuestionsActionProps
-> = ({ onQuestionClick, questions = [], context }) => {
+> = ({ onQuestionClick, questions = [], context, initData }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [suggestionSets, setSuggestionSets] = useState<string[][]>([]);
   const [currentSetIndex, setCurrentSetIndex] = useState(0);
@@ -56,6 +66,9 @@ export const SuggestedQuestionsAction: React.FC<
   const loadSuggestionSets = async () => {
     setIsLoadingSets(true);
     try {
+      // Encrypt initData before sending
+      const encryptedInitData = await encryptInitData(initData);
+
       const response = await fetch("/suggestions", {
         method: "POST",
         headers: {
@@ -64,6 +77,7 @@ export const SuggestedQuestionsAction: React.FC<
         body: JSON.stringify({
           context: context || "general health and wellness",
           currentSetIndex: currentSetIndex,
+          initData: encryptedInitData,
         }),
       });
 
