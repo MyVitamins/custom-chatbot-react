@@ -44,11 +44,19 @@ export interface StructuredContentItem {
 
 export interface Product {
   sku: string;
-  productId: number | string;
-  title: string;
-  imageUrl?: string;
-  description?: string;
-  url: string;
+  name: string;
+  description: string;
+  price: string;
+  ingredients: string[];
+  benefits: string[];
+  dosage: string;
+  warnings: string;
+  productUrl: string;
+  imageUrl: string;
+  category: string;
+  brand: string;
+  servings: string;
+  form: string;
 }
 
 export interface BotDojoResponse {
@@ -124,7 +132,9 @@ export interface TestStructuredRequest {
 }
 
 export interface ChatResponse {
-  messages: Message[];
+  text: string;
+  suggestedQuestions: string[];
+  products: Product[];
   debug?: {
     rawBotDojoResponse: BotDojoResponse;
     endpoint: string;

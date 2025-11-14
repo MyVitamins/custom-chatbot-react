@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useReducer, type ReactNode } from "react";
-import type { Message, SidebarState } from "@types";
+import type { Message, SidebarState, ChatResponse, Product } from "@types";
 import type { InitData } from "@containers/Chatbot";
 import { encryptInitData } from "../utils/encryption";
 
@@ -200,22 +200,32 @@ export function ChatProvider({ children, initData }: ChatProviderProps) {
         throw new Error("Failed to send message");
       }
 
-      const data = await response.json();
-
-      // Log raw BotDojo response to browser console if available and debug mode is enabled
-      if (data.debug && state.debugMode) {
-        console.group("🔍 BotDojo Debug Info");
-        console.log("📡 Endpoint:", data.debug.endpoint);
-        console.log("📤 Request Body:", data.debug.requestBody);
-        console.log("📥 Raw BotDojo Response:", data.debug.rawBotDojoResponse);
-        console.log("💾 Cached:", data.debug.cached || false);
-        console.groupEnd();
-      }
+      const data: ChatResponse | { messages?: Message[] } = await response.json();
 
       // Remove typing indicator and add real bot messages
       dispatch({ type: "REMOVE_TYPING_INDICATOR" });
 
-      if (data.messages && Array.isArray(data.messages)) {
+      // Handle new response format (text, suggestedQuestions, products)
+      if ('text' in data && 'products' in data) {
+        const chatResponse = data as ChatResponse;
+        
+        // Create bot message with text content
+        const botMessage: Message = {
+          id: generateId(),
+          role: "bot",
+          type: "text",
+          content: { text: chatResponse.text },
+          suggestedQuestions: chatResponse.suggestedQuestions,
+          structured: chatResponse.products.length > 0 ? {
+            type: 'product',
+            data: chatResponse.products
+          } : undefined,
+        };
+
+        dispatch({ type: "ADD_MESSAGE", payload: botMessage });
+      } 
+      // Handle legacy response format (messages array)
+      else if (data.messages && Array.isArray(data.messages)) {
         const botMessages: Message[] = data.messages.map((msg: any) => ({
           id: msg.id || generateId(),
           role: msg.role || "bot",
@@ -231,9 +241,9 @@ export function ChatProvider({ children, initData }: ChatProviderProps) {
         const botMessage: Message = {
           id: generateId(),
           role: "bot",
-          type: data.type || "text",
-          content: data.content || "Sorry, I could not process your message.",
-          suggestedQuestions: data.suggestedQuestions || undefined,
+          type: (data as any).type || "text",
+          content: (data as any).content || "Sorry, I could not process your message.",
+          suggestedQuestions: (data as any).suggestedQuestions || undefined,
         };
 
         dispatch({ type: "ADD_MESSAGE", payload: botMessage });
@@ -378,15 +388,6 @@ export function ChatProvider({ children, initData }: ChatProviderProps) {
       }
 
       const data = await response.json();
-
-      // Log raw BotDojo response to browser console if available and debug mode is enabled
-      if (data.debug && state.debugMode) {
-        console.group("🔍 BotDojo Debug Info (Suggestions Refresh)");
-        console.log("📡 Endpoint:", data.debug.endpoint);
-        console.log("📤 Request Body:", data.debug.requestBody);
-        console.log("📥 Raw BotDojo Response:", data.debug.rawBotDojoResponse);
-        console.groupEnd();
-      }
 
       // Update the last bot message with new suggestions
       if (data.messages && Array.isArray(data.messages)) {

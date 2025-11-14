@@ -1,6 +1,6 @@
 import React from "react";
-import { MessageBubble, ButtonGroup, TypingIndicator, SuggestedQuestions, InlineCTA } from "@components";
-import { type Message } from "@types";
+import { MessageBubble, ButtonGroup, TypingIndicator, SuggestedQuestions, ProductCard } from "@components";
+import { type Message, type Product } from "@types";
 
 interface MessageRendererProps {
   message: Message;
@@ -50,16 +50,20 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({
             <div className="text-base leading-relaxed text-gray-800 dark:text-gray-100 whitespace-pre-wrap transition-colors duration-300 ease-in-out">
               {message.content.text}
             </div>
-            {/* Show CTA if structured content is available */}
+            {/* Show products in vertical list if structured content is available */}
             {message.structured &&
-              message.structured.data.length > 0 &&
-              onViewRecommendations && (
-                <InlineCTA
-                  count={message.structured.data.length}
-                  contentType={message.structured.type}
-                  messageId={message.id}
-                  onViewRecommendations={onViewRecommendations}
-                />
+              message.structured.type === "product" &&
+              message.structured.data.length > 0 && (
+                <div className="mt-6 space-y-4">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+                    Recommended Products
+                  </h3>
+                  <div className="space-y-4">
+                    {message.structured.data.map((product: Product, index: number) => (
+                      <ProductCard key={product.sku || index} {...product} />
+                    ))}
+                  </div>
+                </div>
               )}
           </div>
         )}

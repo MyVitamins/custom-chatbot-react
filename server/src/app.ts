@@ -235,11 +235,13 @@ app.post('/chat', asyncHandler(async (req: Request<{}, ChatResponse, ChatRequest
   const cachedResponse = cacheManager.getBotDojoResponse(sanitizedMessage);
   if (cachedResponse) {
     logger.info('Using cached BotDojo response', { requestId });
-    const messages = service.normalizeResponse(cachedResponse);
-    logger.chatResponse(messages, { requestId });
+    const transformedResponse = service.transformToNewFormat(cachedResponse);
+    logger.chatResponse([{ id: 'transformed', role: 'bot', type: 'text', content: { text: transformedResponse.text } }], { requestId });
 
     return res.json({
-      messages,
+      text: transformedResponse.text,
+      suggestedQuestions: transformedResponse.suggestedQuestions,
+      products: transformedResponse.products,
       debug: {
         rawBotDojoResponse: cachedResponse,
         endpoint: `${activeConfig.baseUrl}/accounts/${activeConfig.accountId}/projects/${activeConfig.projectId}/flows/${activeConfig.flowId}/run`,
@@ -262,13 +264,15 @@ app.post('/chat', asyncHandler(async (req: Request<{}, ChatResponse, ChatRequest
     { requestId }
   );
 
-  // Normalize the response
-  const messages = service.normalizeResponse(botdojoResponse);
-  logger.chatResponse(messages, { requestId });
+  // Transform to new format
+  const transformedResponse = service.transformToNewFormat(botdojoResponse);
+  logger.chatResponse([{ id: 'transformed', role: 'bot', type: 'text', content: { text: transformedResponse.text } }], { requestId });
 
-  // Return normalized response with raw data for browser console
+  // Return new response format with raw data for browser console
   res.json({
-    messages,
+    text: transformedResponse.text,
+    suggestedQuestions: transformedResponse.suggestedQuestions,
+    products: transformedResponse.products,
     debug: {
       rawBotDojoResponse: botdojoResponse,
       endpoint: `${activeConfig.baseUrl}/accounts/${activeConfig.accountId}/projects/${activeConfig.projectId}/flows/${activeConfig.flowId}/run`,

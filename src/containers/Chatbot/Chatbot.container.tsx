@@ -18,8 +18,8 @@ export interface ChatbotProps {
   initData: InitData;
 }
 
-export const Chatbot: FC<ChatbotProps> = ({ 
-  isThemeRequired = false, 
+export const Chatbot: FC<ChatbotProps> = ({
+  isThemeRequired = false,
   baseFontSize = 16,
   sidebarZIndex = 50,
   maxHeight,
@@ -27,12 +27,12 @@ export const Chatbot: FC<ChatbotProps> = ({
 }) => {
   return (
     <ChatProvider initData={initData}>
-      <ChatbotContent 
-        isThemeRequired={isThemeRequired} 
+      <ChatbotContent
+        isThemeRequired={isThemeRequired}
         baseFontSize={baseFontSize}
         sidebarZIndex={sidebarZIndex}
         maxHeight={maxHeight}
       />
-    </ChatProvider>
+    </ChatProvider >
   );
 };

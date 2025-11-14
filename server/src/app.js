@@ -146,11 +146,6 @@ app.post('/chat', async (req, res) => {
     // Call BotDojo API
     const botdojoResponse = await service.sendMessage(message.trim());
 
-    // Log the raw BotDojo response
-    console.log('\n=== RAW BOTDOJO RESPONSE ===');
-    console.log(JSON.stringify(botdojoResponse, null, 2));
-    console.log('=== END RAW RESPONSE ===\n');
-
     // Normalize the response
     const messages = service.normalizeResponse(botdojoResponse);
 
@@ -193,9 +188,6 @@ app.post('/debug-botdojo', async (req, res) => {
     if (!message || typeof message !== 'string' || message.trim().length === 0) {
       return res.status(400).json({ error: 'Message is required and must be a non-empty string' });
     }
-
-    console.log('=== DEBUG MODE: Raw BotDojo Response ===');
-    console.log('Message:', message);
 
     // Get BotDojoService instance from headers
     const service = getBotDojoService(req);
